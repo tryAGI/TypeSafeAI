@@ -19,6 +19,7 @@ nav:
   - Bounded batch: examples/bounded-batch.md
   - Replay and forward compatibility: examples/replay.md
   - Typed intent routing: examples/intent-routing.md
+  - AI functions and evaluation: examples/meai-functions-evaluation.md
   - Guardrail policy: examples/guardrail-policy.md
   - Typed API errors: examples/api-errors.md
   - Protected headers: examples/protected-headers.md

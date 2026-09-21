@@ -44,6 +44,12 @@ The matrix describes capabilities, not identical public APIs or proof that every
 
 Retry policy additionally supports configurable HTTP statuses, connection/timeout switches, custom predicates, a total budget, and an injectable delay clock. The SDK does not claim automatic retries are free: ambiguous transport failures may already have incurred server work. Use `RetryPolicy.None` for latency-sensitive or non-replayable calls.
 
+## Verification
+
+On 2026-09-21, all 22 tests passed with live credentials and the opt-in latency lane. A subsequent standard run passed 21 tests and skipped only the opt-in latency benchmark. AutoSDK's trimming check reported no trimming warnings. The native executable in `src/tests/NativeAotSmoke` also passed on macOS arm64, covering generated transport, enum attributes, typed projections, unknown future answers, and the AI-function adapter without network access.
+
+Run the native smoke with `dotnet publish src/tests/NativeAotSmoke -c Release -o artifacts/native-smoke`, then execute the resulting `NativeAotSmoke` binary. Local Apple machines with host build admission should use their admission wrapper for publication.
+
 ## Audit snapshot
 
 The feature review was performed against these source revisions:

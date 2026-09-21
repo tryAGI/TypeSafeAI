@@ -27,6 +27,7 @@ public partial class Tests
             Console.WriteLine($"sample={i} elapsed_ms={elapsed:F1} retry={result.Metadata.RetryCount} model={result.Model} input_tokens={result.Usage.InputTokens} intent={result.Get<ChoiceAnswer>("intent").Choice}");
         }
         timings.Sort();
-        Console.WriteLine($"warm_n={timings.Count} median_ms={timings[timings.Count / 2]:F1} p95_ms={timings[(int)Math.Ceiling(timings.Count * 0.95) - 1]:F1} max_ms={timings[^1]:F1}");
+        var median = (timings[(timings.Count - 1) / 2] + timings[timings.Count / 2]) / 2;
+        Console.WriteLine($"warm_n={timings.Count} median_ms={median:F1} p95_ms={timings[(int)Math.Ceiling(timings.Count * 0.95) - 1]:F1} max_ms={timings[^1]:F1}");
     }
 }

@@ -173,6 +173,30 @@ var router = new TypeSafeIntentRouter<TicketIntent>(client, "Choose the team tha
 var intent = await router.RouteAsync("I was charged twice for invoice 391.");
 ```
 
+### AI functions and evaluation
+Use TypeSafe judgments as agent tools and evaluation metrics. These integrations ship in the main package.
+Import Microsoft.Extensions.AI, Microsoft.Extensions.AI.Evaluation, TypeSafeAI.Extensions.AI, and TypeSafeAI.Extensions.AI.Evaluation.
+
+```csharp
+using var client = new TypeSafeClient(apiKey);
+var questions = new Dictionary<string, Question> { ["relevant"] = new NoulQuestion("Is the response relevant to the question?") };
+
+// Expose fixed, reviewed questions to the calling agent; only state is supplied at invocation.
+var function = TypeSafeAIFunctions.Create(client, questions, "judge_relevance", "Judge relevance.");
+var result = await function.InvokeAsync(new AIFunctionArguments { ["state"] = "Question: hello. Response: hello." });
+
+// The same judgment produces numeric evaluation metrics without a generative judge.
+var evaluator = new TypeSafeEvaluator(client, questions, new TypeSafeEvaluatorOptions
+{
+    Interpret = TypeSafeInterpretations.ByQuestion(new Dictionary<string, Func<TypeSafeMetricContext, EvaluationMetricInterpretation?>>
+    {
+        ["relevant"] = TypeSafeInterpretations.NoulAtLeast(0.8),
+    }),
+});
+var evaluation = await evaluator.EvaluateAsync([new ChatMessage(ChatRole.User, "hello")],
+    new ChatResponse(new ChatMessage(ChatRole.Assistant, "hello")));
+```
+
 ### Guardrail policy
 Combine calibrated hazard probability and severity into an allow, review, or block decision.
 
