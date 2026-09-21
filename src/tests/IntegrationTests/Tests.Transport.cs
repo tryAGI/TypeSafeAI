@@ -52,6 +52,11 @@ public partial class Tests
     {
         Assert.AreSame(typeof(TypeSafeClient).Assembly, typeof(Extensions.AI.TypeSafeAIFunctions).Assembly);
         Assert.AreSame(typeof(TypeSafeClient).Assembly, typeof(Extensions.AI.Evaluation.TypeSafeEvaluator).Assembly);
+        var facade = System.Reflection.Assembly.Load("TypeSafeAI.Extensions.AI");
+        var forwarded = facade.GetForwardedTypes();
+        forwarded.Should().Contain(typeof(Extensions.AI.TypeSafeAIFunctions));
+        forwarded.Should().Contain(typeof(Extensions.AI.Evaluation.TypeSafeEvaluator));
+        forwarded.Should().OnlyContain(type => type.Assembly == typeof(TypeSafeClient).Assembly);
     }
 
     private enum TestIntent

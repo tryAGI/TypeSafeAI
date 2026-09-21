@@ -6,6 +6,9 @@ namespace TypeSafeAI.Extensions.AI.Evaluation;
 
 public enum NoulMetricKind { Numeric, Boolean }
 
+public sealed record TypeSafeEvaluationInput(IReadOnlyList<ChatMessage> Messages, ChatResponse Response,
+    IReadOnlyList<EvaluationContext> AdditionalContext);
+
 public sealed class TypeSafeMetricContext(
     string questionId,
     string metricName,
@@ -30,6 +33,7 @@ public sealed class TypeSafeEvaluatorOptions
     public bool IncludeProbabilities { get; set; } = true;
     public Func<TypeSafeMetricContext, EvaluationMetricInterpretation?>? Interpret { get; set; }
     public Func<IReadOnlyList<ChatMessage>, ChatResponse, JsonContent>? StateBuilder { get; set; }
+    public Func<TypeSafeEvaluationInput, JsonContent>? ContextStateBuilder { get; set; }
 }
 
 /// <summary>Evaluates chat responses with calibrated TypeSafe judgments instead of an LLM judge.</summary>
@@ -71,8 +75,14 @@ public sealed class TypeSafeEvaluator : IEvaluator
         CancellationToken cancellationToken = default)
     {
         var conversation = messages.ToArray();
-        var state = _options.StateBuilder?.Invoke(conversation, modelResponse)
-            ?? ChatState.FromMessages(conversation, modelResponse);
+        var context = additionalContext?.ToArray() ?? [];
+        var namedContext = context.GroupBy(static item => item.Name, StringComparer.Ordinal).ToDictionary(
+            static group => group.Key,
+            static group => string.Join("\n", group.SelectMany(static item => item.Contents).OfType<TextContent>().Select(static content => content.Text)),
+            StringComparer.Ordinal);
+        var state = _options.ContextStateBuilder?.Invoke(new(conversation, modelResponse, context))
+            ?? _options.StateBuilder?.Invoke(conversation, modelResponse)
+            ?? ChatState.FromMessages(conversation, modelResponse, namedContext);
         SystemOneResponse response;
         try
         {
@@ -81,7 +91,9 @@ public sealed class TypeSafeEvaluator : IEvaluator
         }
         catch (TypeSafeException exception) when (exception is not TypeSafeUserAbortException)
         {
-            return new EvaluationResult(_questions.Select(pair => Placeholder(pair.Key, pair.Value, exception.Message)));
+            var failed = new EvaluationResult(_questions.Select(pair => Placeholder(pair.Key, pair.Value, exception.Message)));
+            failed.AddOrUpdateContextInAllMetrics(context);
+            return failed;
         }
 
         var metrics = new List<EvaluationMetric>(_questions.Count);
@@ -100,7 +112,7 @@ public sealed class TypeSafeEvaluator : IEvaluator
             metrics.Add(metric);
         }
         var result = new EvaluationResult(metrics);
-        if (additionalContext is not null) result.AddOrUpdateContextInAllMetrics(additionalContext);
+        result.AddOrUpdateContextInAllMetrics(context);
         return result;
     }
 
