@@ -66,7 +66,7 @@ Console.WriteLine(result.Get(urgency).Score);
 
 Set `TYPESAFE_API_KEY` and use `TypeSafeClient.CreateFromEnvironment()` when you prefer environment configuration. The generated `TypeSafeAI.Generated.RawTypeSafeClient` remains public for direct OpenAPI-level access.
 
-See the [feature parity matrix](docs/feature-parity.md) for the audited upstream surface and [Microsoft.Extensions.AI guide](docs/guides/meai.md) for guardrails, routing, tools, and evaluation.
+See the [feature parity matrix](https://tryagi.github.io/TypeSafeAI/feature-parity/) for the audited upstream surface and [Microsoft.Extensions.AI guide](https://tryagi.github.io/TypeSafeAI/guides/meai/) for guardrails, routing, tools, and evaluation.
 
 <!-- EXAMPLES:START -->
 ### Generate
