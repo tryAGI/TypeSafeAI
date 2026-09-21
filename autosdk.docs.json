@@ -1,0 +1,7 @@
+{
+  "exampleSourceDirectory": "src/tests/IntegrationTests/Examples",
+  "namespace": "TypeSafeAI",
+  "brandName": "TypeSafe AI",
+  "clientClassName": "TypeSafeClient",
+  "apiKeyVariableName": "apiKey"
+}

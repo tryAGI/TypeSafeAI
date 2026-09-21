@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <NoWarn>$(NoWarn);CS1591;CA1032;CA1034;CA1062;CA1508;CA1710;CA1815;CA1848;CA1859;CA1873;CA2225</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Nuget">
+    <PackageId>tryAGI.TypeSafeAI</PackageId>
+    <Title>TypeSafeAI SDK for .NET</Title>
+    <Description>First-class, NativeAOT-compatible .NET SDK for TypeSafe AI System One, generated from the official OpenAPI specification and extended with typed questions, structured content, routing, batching, dependency injection, retries, telemetry, and Microsoft.Extensions.AI integrations.</Description>
+    <PackageTags>typesafe-ai;system-one;jev;classification;structured-output;ai;sdk;openapi;nativeaot</PackageTags>
+    <PackageProjectUrl>https://github.com/tryAGI/TypeSafeAI</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/tryAGI/TypeSafeAI</RepositoryUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.AI.Abstractions" Version="10.10.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.12" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.12" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.12" />
+  </ItemGroup>
+
+</Project>

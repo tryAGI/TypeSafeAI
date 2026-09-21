@@ -1,0 +1,24 @@
+name: Test
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    name: Test core
+    if: github.event.pull_request.draft == false
+    uses: tryAGI/workflows/.github/workflows/generated-sdk-pull-request.yml@main
+    with:
+      project-path: src/libs/TypeSafeAI/TypeSafeAI.csproj
+      enable-caching: false
+      additional-test-arguments: '--logger GitHubActions'
+
+  test-extensions-ai:
+    name: Test Microsoft.Extensions.AI integrations
+    if: github.event.pull_request.draft == false
+    uses: tryAGI/workflows/.github/workflows/generated-sdk-pull-request.yml@main
+    with:
+      project-path: src/libs/TypeSafeAI.Extensions.AI/TypeSafeAI.Extensions.AI.csproj
+      enable-caching: false
+      additional-test-arguments: '--logger GitHubActions'

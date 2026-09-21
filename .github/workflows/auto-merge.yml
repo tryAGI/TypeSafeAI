@@ -1,0 +1,18 @@
+name: Auto-approve and auto-merge bot pull requests
+on:
+  # Test runs without write credentials. This follow-up runs trusted workflow
+  # code from main and never checks out or executes pull-request code.
+  workflow_run:
+    workflows:
+      - Test
+    types:
+      - completed
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  auto-merge:
+    uses: tryAGI/workflows/.github/workflows/auto-merge.yml@main
+    secrets: inherit

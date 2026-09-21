@@ -1,0 +1,26 @@
+<Solution>
+  <Folder Name="/libs/">
+    <File Path="src/libs/Directory.Build.props" />
+    <Project Path="src/libs/TypeSafeAI.Extensions.AI/TypeSafeAI.Extensions.AI.csproj" />
+    <Project Path="src/libs/TypeSafeAI/TypeSafeAI.csproj" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".github/dependabot.yml" />
+    <File Path=".gitignore" />
+    <File Path="LICENSE" />
+    <File Path="README.md" />
+    <File Path="src/Directory.Build.props" />
+  </Folder>
+  <Folder Name="/Solution Items/workflows/">
+    <File Path=".github/workflows/auto-merge.yml" />
+    <File Path=".github/workflows/auto-update.yml" />
+    <File Path=".github/workflows/dotnet.yml" />
+    <File Path=".github/workflows/mkdocs.yml" />
+    <File Path=".github/workflows/pull-request.yml" />
+    <File Path=".github/ISSUE_TEMPLATE/bug-report.yml" />
+    <File Path=".github/ISSUE_TEMPLATE/config.yml" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="src/tests/IntegrationTests/TypeSafeAI.IntegrationTests.csproj" />
+  </Folder>
+</Solution>

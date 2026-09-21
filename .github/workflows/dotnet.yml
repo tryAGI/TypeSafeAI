@@ -1,0 +1,32 @@
+name: Publish
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    tags:
+      - v**
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    name: Publish core
+    uses: tryAGI/workflows/.github/workflows/generated-sdk-publish.yml@main
+    with:
+      project-path: src/libs/TypeSafeAI/TypeSafeAI.csproj
+      enable-caching: false
+      additional-test-arguments: '--logger GitHubActions'
+    secrets:
+      nuget-key: ${{ secrets.NUGET_KEY }}
+
+  publish-extensions-ai:
+    name: Publish Microsoft.Extensions.AI integrations
+    uses: tryAGI/workflows/.github/workflows/generated-sdk-publish.yml@main
+    with:
+      project-path: src/libs/TypeSafeAI.Extensions.AI/TypeSafeAI.Extensions.AI.csproj
+      enable-caching: false
+      additional-test-arguments: '--logger GitHubActions'
+    secrets:
+      nuget-key: ${{ secrets.NUGET_KEY }}

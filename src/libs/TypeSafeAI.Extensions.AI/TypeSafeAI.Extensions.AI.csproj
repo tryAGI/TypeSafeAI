@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <PackageId>tryAGI.TypeSafeAI.Extensions.AI</PackageId>
+    <Title>TypeSafeAI Microsoft.Extensions.AI integrations</Title>
+    <Description>Guardrails, calibrated chat routing, AI function tools, and evaluation adapters for the tryAGI TypeSafeAI SDK.</Description>
+    <PackageTags>typesafe-ai;microsoft-extensions-ai;guardrails;routing;evaluation;ai</PackageTags>
+    <PackageProjectUrl>https://github.com/tryAGI/TypeSafeAI</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/tryAGI/TypeSafeAI</RepositoryUrl>
+    <NoWarn>$(NoWarn);CS1591;CS3001;CS3002;CS3003;CS3009;MEAI001;CA1032;CA1034;CA1062;CA1308;CA1710;CA1815;CA1819;CA1822;CA1848;CA1859;CA2000;CA2215;CA2225</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TypeSafeAI\TypeSafeAI.csproj" />
+    <PackageReference Include="Microsoft.Extensions.AI" Version="10.10.0" />
+    <PackageReference Include="Microsoft.Extensions.AI.Evaluation" Version="10.10.0" />
+  </ItemGroup>
+</Project>
