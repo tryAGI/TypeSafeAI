@@ -50,8 +50,8 @@ public partial class Tests
     [TestMethod]
     public void IntegrationsAreAvailableFromMainAssembly()
     {
-        typeof(Extensions.AI.TypeSafeAIFunctions).Assembly.Should().Be(typeof(TypeSafeClient).Assembly);
-        typeof(Extensions.AI.Evaluation.TypeSafeEvaluator).Assembly.Should().Be(typeof(TypeSafeClient).Assembly);
+        Assert.AreSame(typeof(TypeSafeClient).Assembly, typeof(Extensions.AI.TypeSafeAIFunctions).Assembly);
+        Assert.AreSame(typeof(TypeSafeClient).Assembly, typeof(Extensions.AI.Evaluation.TypeSafeEvaluator).Assembly);
     }
 
     private enum TestIntent
