@@ -3,8 +3,10 @@
   "isRoot": true,
   "tools": {
     "autosdk.cli": {
-      "version": "0.35.0-preview.2.21",
-      "commands": ["autosdk"],
+      "version": "0.35.0-preview.2.22",
+      "commands": [
+        "autosdk"
+      ],
       "rollForward": false
     }
   }
