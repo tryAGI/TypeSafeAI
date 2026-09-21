@@ -73,7 +73,7 @@ See the [feature parity matrix](docs/feature-parity.md) for the audited upstream
 Create a client from `TYPESAFE_API_KEY` and discover the models available to the account.
 
 ```csharp
-using var client = TypeSafeClient.CreateFromEnvironment();
+using var client = new TypeSafeClient(apiKey);
 
 var models = await client.Models.ListAsync();
 ```

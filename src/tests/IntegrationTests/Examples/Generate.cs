@@ -13,7 +13,7 @@ public partial class Tests
     [TestMethod]
     public async Task Example_Generate()
     {
-        using var client = TypeSafeClient.CreateFromEnvironment();
+        using var client = GetAuthenticatedClient();
 
         var models = await client.Models.ListAsync();
 
