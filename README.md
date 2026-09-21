@@ -46,8 +46,7 @@ Issue content—including code blocks, logs, links, and attachments—is treated
 
 ```bash
 dotnet add package tryAGI.TypeSafeAI
-# Optional Microsoft.Extensions.AI middleware and evaluator
-dotnet add package tryAGI.TypeSafeAI.Extensions.AI
+# Microsoft.Extensions.AI middleware, tools, routing, and evaluation are included.
 ```
 
 ```csharp

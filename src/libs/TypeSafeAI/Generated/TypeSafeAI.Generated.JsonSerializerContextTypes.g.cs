@@ -145,23 +145,31 @@ namespace TypeSafeAI.Generated
         /// <summary>
         ///
         /// </summary>
-        public global::TypeSafeAI.Generated.SystemOneResponse? Type28 { get; set; }
+        public global::System.Collections.Generic.Dictionary<string, global::TypeSafeAI.Generated.Question>? Type28 { get; set; }
         /// <summary>
         ///
         /// </summary>
-        public global::TypeSafeAI.Generated.Usage? Type29 { get; set; }
+        public global::TypeSafeAI.Generated.SystemOneResponse? Type29 { get; set; }
         /// <summary>
         ///
         /// </summary>
-        public int? Type30 { get; set; }
+        public global::System.Collections.Generic.Dictionary<string, global::TypeSafeAI.Generated.Answer>? Type30 { get; set; }
         /// <summary>
         ///
         /// </summary>
-        public global::System.Collections.Generic.IList<global::TypeSafeAI.Generated.AnyOf<string, int?>>? Type31 { get; set; }
+        public global::TypeSafeAI.Generated.Usage? Type31 { get; set; }
         /// <summary>
         ///
         /// </summary>
-        public global::TypeSafeAI.Generated.AnyOf<string, int?>? Type32 { get; set; }
+        public int? Type32 { get; set; }
+        /// <summary>
+        ///
+        /// </summary>
+        public global::System.Collections.Generic.IList<global::TypeSafeAI.Generated.AnyOf<string, int?>>? Type33 { get; set; }
+        /// <summary>
+        ///
+        /// </summary>
+        public global::TypeSafeAI.Generated.AnyOf<string, int?>? Type34 { get; set; }
 
         /// <summary>
         ///

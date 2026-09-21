@@ -116,7 +116,7 @@ public sealed record ScoreQuestion : Question
 
     public static ScoreQuestion FromEnum<TEnum>(JsonContent? instructions = null)
         where TEnum : struct, Enum =>
-        new(Enum.GetNames<TEnum>().Select(static name => (JsonContent)(EnumCriteria.GetLabel<TEnum>(name) ?? name)), instructions);
+        new(EnumLabels<TEnum>.Members.Select(static value => (JsonContent)(EnumLabels<TEnum>.GetDescription(value) ?? EnumLabels<TEnum>.GetLabel(value))), instructions);
 
     internal override void Write(Utf8JsonWriter writer)
     {
@@ -145,16 +145,14 @@ public sealed record RawQuestion(JsonElement Value) : Question
 public sealed class LabelAttribute(string label) : Attribute
 {
     public string Label { get; } = label;
+    public string? Description { get; set; }
 }
 
 internal static class EnumCriteria
 {
     internal static Dictionary<string, JsonContent?> Create<TEnum>() where TEnum : struct, Enum =>
-        Enum.GetNames<TEnum>().ToDictionary(
-            static name => name,
-            static name => GetLabel<TEnum>(name) is { } label ? (JsonContent?)label : null,
+        EnumLabels<TEnum>.Members.ToDictionary(
+            static value => EnumLabels<TEnum>.GetLabel(value),
+            static value => EnumLabels<TEnum>.GetDescription(value) is { } description ? (JsonContent?)description : null,
             StringComparer.Ordinal);
-
-    internal static string? GetLabel<TEnum>(string name) where TEnum : struct, Enum =>
-        typeof(TEnum).GetField(name)?.GetCustomAttribute<LabelAttribute>()?.Label;
 }

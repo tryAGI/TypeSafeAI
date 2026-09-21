@@ -18,12 +18,21 @@ public sealed class TypeSafeClientOptions
 /// <summary>Retry policy backed by AutoSDK's generated transport.</summary>
 public sealed class RetryPolicy
 {
+    public static RetryPolicy None => new() { MaxAttempts = 1 };
     public int MaxAttempts { get; set; } = 3;
     public TimeSpan InitialDelay { get; set; } = TimeSpan.FromMilliseconds(500);
     public TimeSpan MaximumDelay { get; set; } = TimeSpan.FromSeconds(30);
     public double BackoffMultiplier { get; set; } = 2;
     public double JitterRatio { get; set; } = 0.2;
     public bool UseRetryAfterHeader { get; set; } = true;
+    public ISet<System.Net.HttpStatusCode> HttpStatuses { get; } = new HashSet<System.Net.HttpStatusCode>(
+        Enumerable.Range(500, 100).Append(408).Append(429).Select(static code => (System.Net.HttpStatusCode)code));
+    public bool RetryConnectionErrors { get; set; } = true;
+    public bool RetryTimeouts { get; set; } = true;
+    public Func<Exception, bool>? Predicate { get; set; }
+    public TimeSpan? TotalTimeout { get; set; } = TimeSpan.FromSeconds(30);
+    public TimeSpan MaximumRetryAfter { get; set; } = TimeSpan.FromSeconds(60);
+    public TimeProvider TimeProvider { get; set; } = TimeProvider.System;
 }
 
 /// <summary>Per-call timeout, retry, header, query, auth, and body overrides.</summary>

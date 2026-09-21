@@ -1,5 +1,7 @@
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
+using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using System.Globalization;
 using System.Net;
 using System.Text.Json;
@@ -41,6 +43,7 @@ public sealed class TypeSafeClient : ITypeSafeClient, IDisposable, IAsyncDisposa
             disposeHttpClient: httpClient is null);
         _raw.AuthorizeUsingBearer(apiKey);
         _raw.Options.Hooks.Add(_retryTracker);
+        ConfigureSerialization();
         _logger = _options.LoggerFactory?.CreateLogger<TypeSafeClient>();
         Models = new ModelsResource(this);
     }
@@ -50,6 +53,7 @@ public sealed class TypeSafeClient : ITypeSafeClient, IDisposable, IAsyncDisposa
         _raw = rawClient ?? throw new ArgumentNullException(nameof(rawClient));
         _options = options ?? new TypeSafeClientOptions();
         _raw.Options.Hooks.Add(_retryTracker);
+        ConfigureSerialization();
         _logger = _options.LoggerFactory?.CreateLogger<TypeSafeClient>();
         Models = new ModelsResource(this);
     }
@@ -65,12 +69,13 @@ public sealed class TypeSafeClient : ITypeSafeClient, IDisposable, IAsyncDisposa
             throw new InvalidOperationException("TYPESAFE_API_KEY is not set.");
         }
 
+        var useEnvironment = options is null;
         options ??= new TypeSafeClientOptions();
-        if (Environment.GetEnvironmentVariable("TYPESAFE_BASE_URL") is { Length: > 0 } baseUrl)
+        if (useEnvironment && Environment.GetEnvironmentVariable("TYPESAFE_BASE_URL") is { Length: > 0 } baseUrl)
         {
             options.BaseUri = new Uri(baseUrl, UriKind.Absolute);
         }
-        if (Environment.GetEnvironmentVariable("TYPESAFE_DEFAULT_MODEL") is { Length: > 0 } model)
+        if (useEnvironment && Environment.GetEnvironmentVariable("TYPESAFE_DEFAULT_MODEL") is { Length: > 0 } model)
         {
             options.DefaultModel = model;
         }
@@ -115,15 +120,18 @@ public sealed class TypeSafeClient : ITypeSafeClient, IDisposable, IAsyncDisposa
         try
         {
             _retryTracker.Reset();
-            var rawResponse = await _raw.SystemoneV1SystemonePostAsResponseAsync(
-                CreateRequest(state, questions, model ?? _options.DefaultModel, requestOptions),
-                CreateRequestOptions(requestOptions),
-                cancellationToken).ConfigureAwait(false);
+            var request = CreateRequest(state, questions, model ?? _options.DefaultModel, requestOptions);
+            var rawResponse = await SendWithRetryAsync(
+                (options, ct) => _raw.SystemoneV1SystemonePostAsResponseAsync(request, options, ct),
+                requestOptions, cancellationToken).ConfigureAwait(false);
             var response = Decode(rawResponse, _retryTracker.RetryCount);
             activity?.SetTag("gen_ai.response.model", response.Model);
             activity?.SetTag("gen_ai.usage.input_tokens", response.Usage.InputTokens);
-            Requests.Add(1, new KeyValuePair<string, object?>("operation", "system_one"));
-            InputTokens.Add(response.Usage.InputTokens);
+            if (_options.EnableTelemetry)
+            {
+                Requests.Add(1, new KeyValuePair<string, object?>("operation", "system_one"));
+                InputTokens.Add(response.Usage.InputTokens);
+            }
             _logger?.LogDebug("TypeSafe System One returned {AnswerCount} answers using {InputTokens} input tokens.", response.Answers.Count, response.Usage.InputTokens);
             return response;
         }
@@ -143,10 +151,17 @@ public sealed class TypeSafeClient : ITypeSafeClient, IDisposable, IAsyncDisposa
         {
             throw MapException(exception);
         }
+        catch (JsonException exception)
+        {
+            throw new TypeSafeResponseValidationException("The response did not match the API contract.", exception.Path, exception);
+        }
         finally
         {
-            Duration.Record(Stopwatch.GetElapsedTime(started).TotalMilliseconds,
-                new KeyValuePair<string, object?>("operation", "system_one"));
+            if (_options.EnableTelemetry)
+            {
+                Duration.Record(Stopwatch.GetElapsedTime(started).TotalMilliseconds,
+                    new KeyValuePair<string, object?>("operation", "system_one"));
+            }
         }
     }
 
@@ -166,7 +181,7 @@ public sealed class TypeSafeClient : ITypeSafeClient, IDisposable, IAsyncDisposa
         CancellationToken cancellationToken = default) =>
         new(await SystemOneAsync(state, (IReadOnlyDictionary<string, Question>)questions, model, requestOptions, cancellationToken).ConfigureAwait(false));
 
-    public async Task<TResponse> SystemOneAsync<TResponse>(
+    public async Task<TResponse> SystemOneAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] TResponse>(
         JsonContent state,
         IReadOnlyDictionary<string, Question> questions,
         JsonTypeInfo<TResponse> responseTypeInfo,
@@ -176,6 +191,22 @@ public sealed class TypeSafeClient : ITypeSafeClient, IDisposable, IAsyncDisposa
     {
         var response = await SystemOneAsync(state, questions, model, requestOptions, cancellationToken).ConfigureAwait(false);
         var answerJson = response.RawJson.GetProperty("answers");
+        foreach (var property in responseTypeInfo.Properties)
+        {
+            if (!typeof(Answer).IsAssignableFrom(property.PropertyType) && !property.IsRequired) continue;
+            var clrProperty = typeof(TResponse).GetProperties().FirstOrDefault(p =>
+                string.Equals(p.GetCustomAttribute<System.Text.Json.Serialization.JsonPropertyNameAttribute>()?.Name ??
+                    responseTypeInfo.Options.PropertyNamingPolicy?.ConvertName(p.Name) ?? p.Name, property.Name, StringComparison.Ordinal));
+            var optional = clrProperty?.IsDefined(typeof(OptionalAnswerAttribute), inherit: true) == true;
+            if (!answerJson.TryGetProperty(property.Name, out var value) || value.ValueKind == JsonValueKind.Null)
+            {
+                if (!optional) throw new TypeSafeResponseValidationException("A required answer is missing.", property.Name);
+                continue;
+            }
+            var expected = property.PropertyType == typeof(NoulAnswer) ? "noul" : property.PropertyType == typeof(ChoiceAnswer) ? "choice" : property.PropertyType == typeof(ScoreAnswer) ? "score" : null;
+            if (expected is not null && (!value.TryGetProperty("type", out var discriminator) || discriminator.GetString() != expected))
+                throw new TypeSafeResponseValidationException($"Expected a {expected} answer.", property.Name);
+        }
         try
         {
             return JsonSerializer.Deserialize(answerJson, responseTypeInfo)
@@ -227,7 +258,15 @@ public sealed class TypeSafeClient : ITypeSafeClient, IDisposable, IAsyncDisposa
         return ValueTask.CompletedTask;
     }
 
-    private static SystemOneRequest CreateRequest(
+    private void ConfigureSerialization()
+    {
+        var options = new JsonSerializerOptions(_raw.JsonSerializerContext.Options);
+        options.Converters.Insert(0, new ForwardCompatibleQuestionConverter());
+        options.Converters.Insert(0, new ForwardCompatibleAnswerConverter());
+        _raw.JsonSerializerContext = new SourceGenerationContext(options);
+    }
+
+    private SystemOneRequest CreateRequest(
         JsonContent state,
         IReadOnlyDictionary<string, Question> questions,
         string model,
@@ -237,7 +276,11 @@ public sealed class TypeSafeClient : ITypeSafeClient, IDisposable, IAsyncDisposa
         var request = new SystemOneRequest(
             TypeSafeAI.Generated.AnyOf<string, object, IList<object>>.FromValue2(state.Value),
             model,
-            questionElement);
+            questionElement.EnumerateObject().ToDictionary(
+                static property => property.Name,
+                property => JsonSerializer.Deserialize(property.Value,
+                    (JsonTypeInfo<Generated.Question>)_raw.JsonSerializerContext.GetTypeInfo(typeof(Generated.Question))!),
+                StringComparer.Ordinal));
         if (options is not null)
         {
             foreach (var pair in options.ExtraBody)
@@ -265,17 +308,18 @@ public sealed class TypeSafeClient : ITypeSafeClient, IDisposable, IAsyncDisposa
             }
             writer.WriteEndObject();
         }
-        return JsonDocument.Parse(stream.ToArray()).RootElement.Clone();
+        using var document = JsonDocument.Parse(stream.ToArray());
+        return document.RootElement.Clone();
     }
 
-    private static Generated.AutoSDKRequestOptions? CreateRequestOptions(RequestOptions? options)
+    private static Generated.AutoSDKRequestOptions CreateRequestOptions(RequestOptions? options)
     {
+        var result = new Generated.AutoSDKRequestOptions { Timeout = options?.Timeout,
+            Retry = new Generated.AutoSDKRetryOptions { MaxAttempts = 1 } };
         if (options is null)
         {
-            return null;
+            return result;
         }
-
-        var result = new Generated.AutoSDKRequestOptions { Timeout = options.Timeout };
         foreach (var pair in options.Headers)
         {
             if (ProtectedHeaders.Contains(pair.Key))
@@ -288,15 +332,62 @@ public sealed class TypeSafeClient : ITypeSafeClient, IDisposable, IAsyncDisposa
         {
             result.QueryParameters[pair.Key] = pair.Value;
         }
-        if (options.Retry is not null)
-        {
-            result.Retry = ToGenerated(options.Retry);
-        }
         if (!string.IsNullOrWhiteSpace(options.ApiKey))
         {
             result.Authorizations = [Generated.AutoSDKAuthorizationValue.Bearer(options.ApiKey)];
         }
         return result;
+    }
+
+    private async Task<T> SendWithRetryAsync<T>(Func<AutoSDKRequestOptions, CancellationToken, Task<T>> send,
+        RequestOptions? requestOptions, CancellationToken ct)
+    {
+        var policy = requestOptions?.Retry ?? _options.Retry;
+        ArgumentOutOfRangeException.ThrowIfLessThan(policy.MaxAttempts, 1);
+        using var budget = CancellationTokenSource.CreateLinkedTokenSource(ct);
+        if (policy.TotalTimeout is { } timeout) budget.CancelAfter(timeout);
+        for (var attempt = 1; ; attempt++)
+        {
+            budget.Token.ThrowIfCancellationRequested();
+            _retryTracker.SetAttempt(attempt);
+            try
+            {
+                return await send(CreateRequestOptions(requestOptions), budget.Token).ConfigureAwait(false);
+            }
+            catch (Exception ex) when (attempt < policy.MaxAttempts && !budget.IsCancellationRequested &&
+                (ex switch
+                {
+                    ApiException api => policy.HttpStatuses.Contains(api.StatusCode),
+                    HttpRequestException => policy.RetryConnectionErrors,
+                    OperationCanceledException => policy.RetryTimeouts,
+                    _ => false,
+                } || policy.Predicate?.Invoke(ex) == true))
+            {
+                var milliseconds = Math.Min(policy.MaximumDelay.TotalMilliseconds,
+                    policy.InitialDelay.TotalMilliseconds * Math.Pow(Math.Max(1, policy.BackoffMultiplier), attempt - 1));
+                milliseconds *= 1 + (System.Security.Cryptography.RandomNumberGenerator.GetInt32(10000) / 5000.0 - 1) * Math.Clamp(policy.JitterRatio, 0, 1);
+                var delay = TimeSpan.FromMilliseconds(Math.Clamp(milliseconds, 0, policy.MaximumDelay.TotalMilliseconds));
+                if (policy.UseRetryAfterHeader && ex is ApiException api && ReadRetryAfter(api.ResponseHeaders, policy.TimeProvider) is { } retryAfter)
+                    delay = retryAfter > policy.MaximumRetryAfter ? policy.MaximumRetryAfter : retryAfter;
+                await Task.Delay(delay, policy.TimeProvider, budget.Token).ConfigureAwait(false);
+            }
+        }
+    }
+
+    private static TimeSpan? ReadRetryAfter(IDictionary<string, IEnumerable<string>>? headers, TimeProvider clock)
+    {
+        if (headers is null) return null;
+        string? Read(string name) => headers.FirstOrDefault(pair => string.Equals(pair.Key, name, StringComparison.OrdinalIgnoreCase)).Value?.FirstOrDefault();
+        if (double.TryParse(Read("retry-after-ms"), NumberStyles.Float, CultureInfo.InvariantCulture, out var milliseconds) &&
+            double.IsFinite(milliseconds) && milliseconds >= 0 && milliseconds < TimeSpan.MaxValue.TotalMilliseconds)
+            return TimeSpan.FromMilliseconds(milliseconds);
+        var raw = Read("retry-after");
+        if (double.TryParse(raw, NumberStyles.Float, CultureInfo.InvariantCulture, out var seconds) &&
+            double.IsFinite(seconds) && seconds >= 0 && seconds < TimeSpan.MaxValue.TotalSeconds)
+            return TimeSpan.FromSeconds(seconds);
+        if (DateTimeOffset.TryParse(raw, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out var date))
+            return date > clock.GetUtcNow() ? date - clock.GetUtcNow() : TimeSpan.Zero;
+        return null;
     }
 
     private static Generated.AutoSDKClientOptions CreateGeneratedOptions(TypeSafeClientOptions options)
@@ -327,29 +418,14 @@ public sealed class TypeSafeClient : ITypeSafeClient, IDisposable, IAsyncDisposa
         UseRetryAfterHeader = retry.UseRetryAfterHeader,
     };
 
-    private static SystemOneResponse Decode(
+    private SystemOneResponse Decode(
         Generated.AutoSDKHttpResponse<Generated.SystemOneResponse> response,
         int retryCount)
     {
-        var requestId = GetHeader(response.Headers, "x-request-id") ?? GetHeader(response.Headers, "request-id");
+        var requestId = GetHeader(response.Headers, "x-typesafe-request-id") ?? GetHeader(response.Headers, "x-request-id") ?? GetHeader(response.Headers, "request-id");
         var metadata = new ResponseMetadata(response.StatusCode, response.Headers, response.RequestUri, requestId, retryCount);
-        var body = response.Body;
-        var answers = AsElement(body.Answers, "answers");
-        using var stream = new MemoryStream();
-        using (var writer = new Utf8JsonWriter(stream))
-        {
-            writer.WriteStartObject();
-            writer.WriteString("model", body.Model);
-            writer.WritePropertyName("answers");
-            answers.WriteTo(writer);
-            writer.WritePropertyName("usage");
-            writer.WriteStartObject();
-            writer.WriteNumber("input_tokens", body.Usage.InputTokens);
-            writer.WriteNumber("output_tokens", body.Usage.OutputTokens);
-            writer.WriteEndObject();
-            writer.WriteEndObject();
-        }
-        var raw = JsonDocument.Parse(stream.ToArray()).RootElement.Clone();
+        var raw = JsonSerializer.SerializeToElement(response.Body,
+            (JsonTypeInfo<Generated.SystemOneResponse>)_raw.JsonSerializerContext.GetTypeInfo(typeof(Generated.SystemOneResponse))!);
         return Decode(raw, metadata);
     }
 
@@ -403,14 +479,6 @@ public sealed class TypeSafeClient : ITypeSafeClient, IDisposable, IAsyncDisposa
     private static IReadOnlyDictionary<string, JsonElement> ReadElementDictionary(JsonElement element) =>
         element.EnumerateObject().ToDictionary(static p => p.Name, static p => p.Value.Clone(), StringComparer.Ordinal);
 
-    private static JsonElement AsElement(object value, string path) => value switch
-    {
-        JsonElement element => element,
-        JsonDocument document => document.RootElement,
-        _ => throw new TypeSafeResponseValidationException(
-            $"AutoSDK returned an unsupported runtime value '{value.GetType().Name}'. See AutoSDK issue #399.", path),
-    };
-
     private static string? GetHeader(IReadOnlyDictionary<string, IEnumerable<string>> headers, string name) =>
         headers.TryGetValue(name, out var values) ? values.FirstOrDefault() : null;
 
@@ -424,7 +492,7 @@ public sealed class TypeSafeClient : ITypeSafeClient, IDisposable, IAsyncDisposa
             HttpStatusCode.Forbidden => new PermissionDeniedException(message, exception.ResponseBody, exception),
             HttpStatusCode.NotFound => new NotFoundException(message, exception.ResponseBody, exception),
             HttpStatusCode.UnprocessableEntity => new UnprocessableEntityException(message, exception.ResponseBody, exception),
-            HttpStatusCode.TooManyRequests => new RateLimitException(message, exception.ResponseBody, ApiException.TryParseRetryAfter(exception.ResponseHeaders), exception),
+            HttpStatusCode.TooManyRequests => new RateLimitException(message, exception.ResponseBody, ReadRetryAfter(exception.ResponseHeaders, TimeProvider.System), exception),
             >= HttpStatusCode.InternalServerError => new InternalServerException(message, exception.StatusCode, exception.ResponseBody, exception),
             _ => new TypeSafeApiException(message, exception.StatusCode, exception.ResponseBody, exception),
         };
@@ -441,14 +509,31 @@ public sealed class TypeSafeClient : ITypeSafeClient, IDisposable, IAsyncDisposa
         {
             try
             {
-                var response = await client._raw.ModelsV1V1ModelsGetAsync(
-                    CreateRequestOptions(requestOptions), cancellationToken).ConfigureAwait(false);
+                client._retryTracker.Reset();
+                var response = await client.SendWithRetryAsync(
+                    (options, ct) => client._raw.ModelsV1V1ModelsGetAsync(options, ct), requestOptions, cancellationToken).ConfigureAwait(false);
                 return response.Models.Select(static model =>
                     new ModelMetadata(model.Name, model.Description, model.ReleaseDate)).ToArray();
             }
             catch (ApiException exception)
             {
                 throw MapException(exception);
+            }
+            catch (JsonException exception)
+            {
+                throw new TypeSafeResponseValidationException("The response did not match the API contract.", exception.Path, exception);
+            }
+            catch (OperationCanceledException exception) when (cancellationToken.IsCancellationRequested)
+            {
+                throw new TypeSafeUserAbortException("The TypeSafe request was cancelled by the caller.", exception);
+            }
+            catch (OperationCanceledException exception)
+            {
+                throw new TypeSafeTimeoutException("The TypeSafe request timed out.", exception);
+            }
+            catch (HttpRequestException exception)
+            {
+                throw new TypeSafeConnectionException("Unable to connect to the TypeSafe API.", exception);
             }
         }
     }
@@ -459,10 +544,10 @@ public sealed class TypeSafeClient : ITypeSafeClient, IDisposable, IAsyncDisposa
         public int RetryCount => _current.Value?.RetryCount ?? 0;
 
         public void Reset() => _current.Value = new Holder();
+        public void SetAttempt(int attempt) => (_current.Value ??= new Holder()).RetryCount = attempt - 1;
 
         public override Task OnBeforeRequestAsync(Generated.AutoSDKHookContext context)
         {
-            (_current.Value ??= new Holder()).RetryCount = Math.Max(0, context.Attempt - 1);
             return Task.CompletedTask;
         }
 

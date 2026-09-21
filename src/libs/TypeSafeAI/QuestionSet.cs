@@ -25,6 +25,18 @@ public sealed class QuestionSet : IReadOnlyDictionary<string, Question>
         return new(name);
     }
 
+    public ChoiceHandle<TEnum> AddChoice<TEnum>(string name, JsonContent? instructions = null) where TEnum : struct, Enum
+    {
+        Add(name, ChoiceQuestion.FromEnum<TEnum>(instructions));
+        return new(name);
+    }
+
+    public ScoreHandle<TEnum> AddScore<TEnum>(string name, JsonContent? instructions = null) where TEnum : struct, Enum
+    {
+        Add(name, ScoreQuestion.FromEnum<TEnum>(instructions));
+        return new(name);
+    }
+
     public QuestionHandle<ScoreAnswer> AddScore(string name, ScoreQuestion question)
     {
         Add(name, question);
@@ -51,6 +63,10 @@ public sealed class QuestionSet : IReadOnlyDictionary<string, Question>
 /// <summary>A response tied to the question set that produced it.</summary>
 public sealed record QuestionSetResult(SystemOneResponse Response)
 {
+    public ChoiceAnswer<TEnum> Get<TEnum>(ChoiceHandle<TEnum> handle) where TEnum : struct, Enum =>
+        new(Response.Get<ChoiceAnswer>(handle.Name));
+    public ScoreAnswer<TEnum> Get<TEnum>(ScoreHandle<TEnum> handle) where TEnum : struct, Enum =>
+        new(Response.Get<ScoreAnswer>(handle.Name));
     public TAnswer Get<TAnswer>(QuestionHandle<TAnswer> handle) where TAnswer : Answer =>
         Response.Answers.Get<TAnswer>(handle.Name);
 }

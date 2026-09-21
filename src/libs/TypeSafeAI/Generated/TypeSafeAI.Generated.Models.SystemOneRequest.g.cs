@@ -28,7 +28,7 @@ namespace TypeSafeAI.Generated
         /// </summary>
         [global::System.Text.Json.Serialization.JsonPropertyName("questions")]
         [global::System.Text.Json.Serialization.JsonRequired]
-        public required object Questions { get; set; }
+        public required global::System.Collections.Generic.Dictionary<string, global::TypeSafeAI.Generated.Question> Questions { get; set; }
 
         /// <summary>
         /// Raw JSON properties that are not explicitly defined in the schema
@@ -54,7 +54,7 @@ namespace TypeSafeAI.Generated
         public SystemOneRequest(
             global::TypeSafeAI.Generated.AnyOf<string, object, global::System.Collections.Generic.IList<object>> state,
             string model,
-            object questions)
+            global::System.Collections.Generic.Dictionary<string, global::TypeSafeAI.Generated.Question> questions)
         {
             this.State = state;
             this.Model = model ?? throw new global::System.ArgumentNullException(nameof(model));

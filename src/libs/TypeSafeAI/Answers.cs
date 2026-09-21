@@ -23,7 +23,10 @@ public sealed record ChoiceAnswer(
     IReadOnlyDictionary<string, double> Probabilities) : Answer("choice")
 {
     public TEnum AsEnum<TEnum>(bool ignoreCase = true) where TEnum : struct, Enum =>
-        Enum.Parse<TEnum>(Choice, ignoreCase);
+        EnumLabels<TEnum>.TryParse(Choice, out var value, ignoreCase) ? value
+            : throw new TypeSafeResponseValidationException($"Unknown choice label '{Choice}' for {typeof(TEnum).Name}.");
+
+    public double Probability(string choice) => Probabilities.TryGetValue(choice, out var probability) ? probability : 0;
 }
 
 /// <summary>An expected score, legend, and score-level probability distribution.</summary>
@@ -33,6 +36,10 @@ public sealed record ScoreAnswer(
     IReadOnlyDictionary<string, JsonElement> Legend,
     IReadOnlyDictionary<string, double> Probabilities) : Answer("score")
 {
+    public int Nearest => checked((int)Math.Round(Score, MidpointRounding.AwayFromZero));
+    public TEnum MostLikelyAsEnum<TEnum>() where TEnum : struct, Enum => EnumLabels<TEnum>.AtIndex(MostLikely);
+    public TEnum NearestAsEnum<TEnum>() where TEnum : struct, Enum => EnumLabels<TEnum>.AtIndex(Nearest);
+    public double Probability(int index) => Probabilities.TryGetValue(index.ToString(System.Globalization.CultureInfo.InvariantCulture), out var value) ? value : 0;
     public int MostLikely => Probabilities.Count == 0
         ? checked((int)Math.Round(Score, MidpointRounding.AwayFromZero))
         : int.Parse(Probabilities.MaxBy(static pair => pair.Value).Key, System.Globalization.CultureInfo.InvariantCulture);

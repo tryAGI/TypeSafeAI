@@ -19,6 +19,10 @@ public class TypeSafeApiException : TypeSafeException
 
     public HttpStatusCode StatusCode { get; }
     public string? ResponseBody { get; }
+    public IReadOnlyDictionary<string, IEnumerable<string>> Headers => InnerException is Generated.ApiException api && api.ResponseHeaders is { } headers
+        ? new Dictionary<string, IEnumerable<string>>(headers, StringComparer.OrdinalIgnoreCase)
+        : new Dictionary<string, IEnumerable<string>>();
+    public string? RequestId => Headers.TryGetValue("x-typesafe-request-id", out var values) ? values.FirstOrDefault() : null;
 }
 
 public sealed class BadRequestException(string message, string? body, Exception? inner = null)

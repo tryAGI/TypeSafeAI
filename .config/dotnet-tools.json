@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "isRoot": true,
+  "tools": {
+    "autosdk.cli": {
+      "version": "0.35.0-preview.2.21",
+      "commands": ["autosdk"],
+      "rollForward": false
+    }
+  }
+}

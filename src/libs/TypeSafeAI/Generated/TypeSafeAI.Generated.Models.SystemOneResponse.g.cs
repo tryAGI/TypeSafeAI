@@ -20,7 +20,7 @@ namespace TypeSafeAI.Generated
         /// </summary>
         [global::System.Text.Json.Serialization.JsonPropertyName("answers")]
         [global::System.Text.Json.Serialization.JsonRequired]
-        public required object Answers { get; set; }
+        public required global::System.Collections.Generic.Dictionary<string, global::TypeSafeAI.Generated.Answer> Answers { get; set; }
 
         /// <summary>
         /// Input and output token counts for this evaluation.
@@ -52,7 +52,7 @@ namespace TypeSafeAI.Generated
 #endif
         public SystemOneResponse(
             string model,
-            object answers,
+            global::System.Collections.Generic.Dictionary<string, global::TypeSafeAI.Generated.Answer> answers,
             global::TypeSafeAI.Generated.Usage usage)
         {
             this.Model = model ?? throw new global::System.ArgumentNullException(nameof(model));

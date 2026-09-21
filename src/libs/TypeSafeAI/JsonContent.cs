@@ -8,12 +8,13 @@ namespace TypeSafeAI;
 public readonly struct JsonContent
 {
     private readonly JsonElement _value;
+    private static readonly JsonElement NullValue = Parse("null")._value;
 
     private JsonContent(JsonElement value) => _value = value.Clone();
 
     /// <summary>Gets the underlying immutable JSON value.</summary>
     public JsonElement Value => _value.ValueKind == JsonValueKind.Undefined
-        ? JsonDocument.Parse("null").RootElement.Clone()
+        ? NullValue
         : _value;
 
     /// <summary>Creates content from an arbitrary value using source-generated metadata.</summary>
@@ -21,14 +22,18 @@ public readonly struct JsonContent
         new(JsonSerializer.SerializeToElement(value, typeInfo));
 
     /// <summary>Parses a JSON value.</summary>
-    public static JsonContent Parse(string json) => new(JsonDocument.Parse(json).RootElement);
+    public static JsonContent Parse(string json)
+    {
+        using var document = JsonDocument.Parse(json);
+        return new(document.RootElement);
+    }
 
     /// <summary>Creates content from a DOM value.</summary>
     public static JsonContent FromNode(JsonNode? node) =>
         node is null ? Null : new(JsonSerializer.SerializeToElement(node, JsonDefaults.Node));
 
     /// <summary>Represents JSON null.</summary>
-    public static JsonContent Null => Parse("null");
+    public static JsonContent Null => default;
 
     public static implicit operator JsonContent(string value) =>
         new(JsonSerializer.SerializeToElement(value, JsonDefaults.String));

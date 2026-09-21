@@ -79,7 +79,7 @@ public sealed class TypeSafeEvaluator : IEvaluator
             response = await _client.SystemOneAsync(
                 state, _questions, _options.Model, _options.RequestOptions, cancellationToken).ConfigureAwait(false);
         }
-        catch (TypeSafeException exception)
+        catch (TypeSafeException exception) when (exception is not TypeSafeUserAbortException)
         {
             return new EvaluationResult(_questions.Select(pair => Placeholder(pair.Key, pair.Value, exception.Message)));
         }
@@ -167,6 +167,10 @@ public sealed class TypeSafeEvaluator : IEvaluator
 
 public static class TypeSafeInterpretations
 {
+    public static Func<TypeSafeMetricContext, EvaluationMetricInterpretation?> ByQuestion(
+        IReadOnlyDictionary<string, Func<TypeSafeMetricContext, EvaluationMetricInterpretation?>> interpretations) =>
+        context => interpretations.TryGetValue(context.QuestionId, out var interpret) ? interpret(context) : null;
+
     public static Func<TypeSafeMetricContext, EvaluationMetricInterpretation?> ScoreAtLeast(int level) => context =>
         context.Answer is ScoreAnswer score
             ? Create(Math.Clamp(score.Score / Math.Max(1, score.Legend.Count - 1), 0, 1), score.Score < level,

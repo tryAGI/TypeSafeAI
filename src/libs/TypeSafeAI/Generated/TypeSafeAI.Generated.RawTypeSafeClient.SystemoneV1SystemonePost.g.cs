@@ -498,7 +498,7 @@ namespace TypeSafeAI.Generated
         public async global::System.Threading.Tasks.Task<global::TypeSafeAI.Generated.SystemOneResponse> SystemoneV1SystemonePostAsync(
             global::TypeSafeAI.Generated.AnyOf<string, object, global::System.Collections.Generic.IList<object>> state,
             string model,
-            object questions,
+            global::System.Collections.Generic.Dictionary<string, global::TypeSafeAI.Generated.Question> questions,
             global::TypeSafeAI.Generated.AutoSDKRequestOptions? requestOptions = default,
             global::System.Threading.CancellationToken cancellationToken = default)
         {

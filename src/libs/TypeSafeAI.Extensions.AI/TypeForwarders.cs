@@ -1,0 +1,24 @@
+using System.Runtime.CompilerServices;
+using TypeSafeAI.Extensions.AI;
+using TypeSafeAI.Extensions.AI.Evaluation;
+
+[assembly: TypeForwardedTo(typeof(Microsoft.Extensions.AI.TypeSafeChatClientBuilderExtensions))]
+[assembly: TypeForwardedTo(typeof(ChatState))]
+[assembly: TypeForwardedTo(typeof(GuardrailDirection))]
+[assembly: TypeForwardedTo(typeof(GuardrailAction))]
+[assembly: TypeForwardedTo(typeof(GuardrailDecision))]
+[assembly: TypeForwardedTo(typeof(GuardrailOutcome))]
+[assembly: TypeForwardedTo(typeof(GuardrailAssessment))]
+[assembly: TypeForwardedTo(typeof(GuardrailOptions))]
+[assembly: TypeForwardedTo(typeof(GuardrailPolicies))]
+[assembly: TypeForwardedTo(typeof(TypeSafeGuardrailException))]
+[assembly: TypeForwardedTo(typeof(TypeSafeGuardrailChatClient))]
+[assembly: TypeForwardedTo(typeof(TypeSafeRoutingContext))]
+[assembly: TypeForwardedTo(typeof(RoutingOptions))]
+[assembly: TypeForwardedTo(typeof(TypeSafeRoutingChatClient))]
+[assembly: TypeForwardedTo(typeof(TypeSafeAIFunctions))]
+[assembly: TypeForwardedTo(typeof(NoulMetricKind))]
+[assembly: TypeForwardedTo(typeof(TypeSafeMetricContext))]
+[assembly: TypeForwardedTo(typeof(TypeSafeEvaluatorOptions))]
+[assembly: TypeForwardedTo(typeof(TypeSafeEvaluator))]
+[assembly: TypeForwardedTo(typeof(TypeSafeInterpretations))]

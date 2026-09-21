@@ -8,7 +8,7 @@ The TypeSafeAI SDK provides integration with [Microsoft.Extensions.AI](https://l
 ## Installation
 
 ```bash
-dotnet add package tryAGI.TypeSafeAI.Extensions.AI
+dotnet add package tryAGI.TypeSafeAI
 ```
 
 ## Usage

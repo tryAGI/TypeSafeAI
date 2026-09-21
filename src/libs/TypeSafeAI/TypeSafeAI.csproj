@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
-    <NoWarn>$(NoWarn);CS1591;CA1032;CA1034;CA1062;CA1508;CA1710;CA1815;CA1848;CA1859;CA1873;CA2225</NoWarn>
+    <NoWarn>$(NoWarn);CS1591;CS3001;CS3002;CS3003;CS3009;MEAI001;CA1032;CA1034;CA1062;CA1308;CA1508;CA1710;CA1815;CA1819;CA1822;CA1848;CA1859;CA1873;CA2000;CA2215;CA2225</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Label="Nuget">
@@ -16,6 +16,8 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.AI.Abstractions" Version="10.10.0" />
+    <PackageReference Include="Microsoft.Extensions.AI" Version="10.10.0" />
+    <PackageReference Include="Microsoft.Extensions.AI.Evaluation" Version="10.10.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.12" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.12" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.12" />

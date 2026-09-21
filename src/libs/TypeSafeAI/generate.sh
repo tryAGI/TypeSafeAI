@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-dotnet tool update --global autosdk.cli --prerelease
+dotnet tool restore
 curl --fail --silent --show-error --location \
   --output openapi.yaml \
   https://api.typesafe.ai/openapi.json
-autosdk generate openapi.yaml \
+dotnet tool run autosdk generate openapi.yaml \
   --namespace TypeSafeAI.Generated \
   --clientClassName RawTypeSafeClient \
   --targetFramework net10.0 \
