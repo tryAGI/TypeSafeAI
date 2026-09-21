@@ -18,6 +18,7 @@ public sealed class TypeSafeClient : ITypeSafeClient, IDisposable, IAsyncDisposa
     private static readonly ActivitySource ActivitySource = new(ActivitySourceName);
     private static readonly Meter Meter = new(ActivitySourceName);
     private static readonly Counter<long> Requests = Meter.CreateCounter<long>("typesafe.requests");
+    private static readonly Counter<long> Errors = Meter.CreateCounter<long>("typesafe.errors");
     private static readonly Counter<long> InputTokens = Meter.CreateCounter<long>("typesafe.input_tokens");
     private static readonly Histogram<double> Duration = Meter.CreateHistogram<double>("typesafe.request.duration", "ms");
     private static readonly HashSet<string> ProtectedHeaders = new(StringComparer.OrdinalIgnoreCase)
@@ -116,6 +117,7 @@ public sealed class TypeSafeClient : ITypeSafeClient, IDisposable, IAsyncDisposa
         activity?.SetTag("gen_ai.request.model", model ?? _options.DefaultModel);
         activity?.SetTag("typesafe.question_count", questions.Count);
         var started = Stopwatch.GetTimestamp();
+        var succeeded = false;
 
         try
         {
@@ -129,10 +131,10 @@ public sealed class TypeSafeClient : ITypeSafeClient, IDisposable, IAsyncDisposa
             activity?.SetTag("gen_ai.usage.input_tokens", response.Usage.InputTokens);
             if (_options.EnableTelemetry)
             {
-                Requests.Add(1, new KeyValuePair<string, object?>("operation", "system_one"));
                 InputTokens.Add(response.Usage.InputTokens);
             }
             _logger?.LogDebug("TypeSafe System One returned {AnswerCount} answers using {InputTokens} input tokens.", response.Answers.Count, response.Usage.InputTokens);
+            succeeded = true;
             return response;
         }
         catch (OperationCanceledException exception) when (cancellationToken.IsCancellationRequested)
@@ -159,6 +161,12 @@ public sealed class TypeSafeClient : ITypeSafeClient, IDisposable, IAsyncDisposa
         {
             if (_options.EnableTelemetry)
             {
+                Requests.Add(1, new KeyValuePair<string, object?>("operation", "system_one"));
+                if (!succeeded)
+                {
+                    Errors.Add(1, new KeyValuePair<string, object?>("operation", "system_one"));
+                    activity?.SetStatus(ActivityStatusCode.Error);
+                }
                 Duration.Record(Stopwatch.GetElapsedTime(started).TotalMilliseconds,
                     new KeyValuePair<string, object?>("operation", "system_one"));
             }

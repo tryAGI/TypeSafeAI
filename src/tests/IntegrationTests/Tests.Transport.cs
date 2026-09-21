@@ -97,4 +97,21 @@ public partial class Tests
     {
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken) => send(request, cancellationToken);
     }
+
+    [TestMethod]
+    public async Task RateLimitErrorRetainsMillisecondRetryHeaderAndRequestId()
+    {
+        using var http = new HttpClient(new StubHandler((_, _) =>
+        {
+            var response = new HttpResponseMessage(HttpStatusCode.TooManyRequests) { Content = new StringContent("{}") };
+            response.Headers.Add("retry-after-ms", "125.5");
+            response.Headers.Add("X-TypeSafe-Request-Id", "limited-request");
+            return Task.FromResult(response);
+        }));
+        using var client = new TypeSafeClient("test", http, new TypeSafeClientOptions { Retry = RetryPolicy.None });
+        var action = () => client.Models.ListAsync();
+        var failure = await action.Should().ThrowAsync<RateLimitException>();
+        failure.Which.RetryAfter.Should().Be(TimeSpan.FromMilliseconds(125.5));
+        failure.Which.RequestId.Should().Be("limited-request");
+    }
 }
