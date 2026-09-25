@@ -15,6 +15,7 @@ jobs:
     name: Publish core
     uses: tryAGI/workflows/.github/workflows/generated-sdk-publish.yml@main
     with:
+      auto-stable-release: true
       project-path: src/libs/TypeSafeAI/TypeSafeAI.csproj
       enable-caching: false
       additional-test-arguments: '--logger GitHubActions'
