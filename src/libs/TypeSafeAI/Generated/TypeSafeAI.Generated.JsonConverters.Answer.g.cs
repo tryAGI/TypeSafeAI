@@ -68,19 +68,19 @@ namespace TypeSafeAI.Generated.JsonConverters
             {
                 var typeInfo = typeInfoResolver.GetTypeInfo(typeof(global::TypeSafeAI.Generated.NoulAnswer), options) as global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<global::TypeSafeAI.Generated.NoulAnswer?> ??
                                throw new global::System.InvalidOperationException($"Cannot get type info for {typeof(global::TypeSafeAI.Generated.NoulAnswer).Name}");
-                global::System.Text.Json.JsonSerializer.Serialize(writer, value.Noul!, typeInfo);
+                global::System.Text.Json.JsonSerializer.Serialize(writer, value.PickNoul(), typeInfo);
             }
             else if (value.IsScore)
             {
                 var typeInfo = typeInfoResolver.GetTypeInfo(typeof(global::TypeSafeAI.Generated.ScoreAnswer), options) as global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<global::TypeSafeAI.Generated.ScoreAnswer?> ??
                                throw new global::System.InvalidOperationException($"Cannot get type info for {typeof(global::TypeSafeAI.Generated.ScoreAnswer).Name}");
-                global::System.Text.Json.JsonSerializer.Serialize(writer, value.Score!, typeInfo);
+                global::System.Text.Json.JsonSerializer.Serialize(writer, value.PickScore(), typeInfo);
             }
             else if (value.IsChoice)
             {
                 var typeInfo = typeInfoResolver.GetTypeInfo(typeof(global::TypeSafeAI.Generated.ChoiceAnswer), options) as global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<global::TypeSafeAI.Generated.ChoiceAnswer?> ??
                                throw new global::System.InvalidOperationException($"Cannot get type info for {typeof(global::TypeSafeAI.Generated.ChoiceAnswer).Name}");
-                global::System.Text.Json.JsonSerializer.Serialize(writer, value.Choice!, typeInfo);
+                global::System.Text.Json.JsonSerializer.Serialize(writer, value.PickChoice(), typeInfo);
             }
         }
     }
