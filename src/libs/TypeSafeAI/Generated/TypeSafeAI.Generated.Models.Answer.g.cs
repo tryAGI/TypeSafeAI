@@ -47,8 +47,8 @@ namespace TypeSafeAI.Generated
         /// <summary>
         ///
         /// </summary>
-        public global::TypeSafeAI.Generated.NoulAnswer PickNoul() => IsNoul
-            ? Noul!
+        public global::TypeSafeAI.Generated.NoulAnswer PickNoul() => Noul is { } value
+            ? value
             : throw new global::System.InvalidOperationException($"Expected union variant 'Noul' but the value was {ToString()}.");
 
         /// <summary>
@@ -84,8 +84,8 @@ namespace TypeSafeAI.Generated
         /// <summary>
         ///
         /// </summary>
-        public global::TypeSafeAI.Generated.ScoreAnswer PickScore() => IsScore
-            ? Score!
+        public global::TypeSafeAI.Generated.ScoreAnswer PickScore() => Score is { } value
+            ? value
             : throw new global::System.InvalidOperationException($"Expected union variant 'Score' but the value was {ToString()}.");
 
         /// <summary>
@@ -121,8 +121,8 @@ namespace TypeSafeAI.Generated
         /// <summary>
         ///
         /// </summary>
-        public global::TypeSafeAI.Generated.ChoiceAnswer PickChoice() => IsChoice
-            ? Choice!
+        public global::TypeSafeAI.Generated.ChoiceAnswer PickChoice() => Choice is { } value
+            ? value
             : throw new global::System.InvalidOperationException($"Expected union variant 'Choice' but the value was {ToString()}.");
         /// <summary>
         ///
@@ -250,17 +250,17 @@ namespace TypeSafeAI.Generated
                 Validate();
             }
 
-            if (IsNoul && noul != null)
+            if (Noul is { } __value0 && noul != null)
             {
-                return noul(Noul!);
+                return noul(__value0);
             }
-            else if (IsScore && score != null)
+            else if (Score is { } __value1 && score != null)
             {
-                return score(Score!);
+                return score(__value1);
             }
-            else if (IsChoice && choice != null)
+            else if (Choice is { } __value2 && choice != null)
             {
-                return choice(Choice!);
+                return choice(__value2);
             }
 
             return default(TResult);
@@ -282,17 +282,17 @@ namespace TypeSafeAI.Generated
                 Validate();
             }
 
-            if (IsNoul)
+            if (Noul is { } __value0)
             {
-                noul?.Invoke(Noul!);
+                noul?.Invoke(__value0);
             }
-            else if (IsScore)
+            else if (Score is { } __value1)
             {
-                score?.Invoke(Score!);
+                score?.Invoke(__value1);
             }
-            else if (IsChoice)
+            else if (Choice is { } __value2)
             {
-                choice?.Invoke(Choice!);
+                choice?.Invoke(__value2);
             }
         }
 
@@ -310,17 +310,17 @@ namespace TypeSafeAI.Generated
                 Validate();
             }
 
-            if (IsNoul)
+            if (Noul is { } __value0)
             {
-                noul?.Invoke(Noul!);
+                noul?.Invoke(__value0);
             }
-            else if (IsScore)
+            else if (Score is { } __value1)
             {
-                score?.Invoke(Score!);
+                score?.Invoke(__value1);
             }
-            else if (IsChoice)
+            else if (Choice is { } __value2)
             {
-                choice?.Invoke(Choice!);
+                choice?.Invoke(__value2);
             }
         }
 
