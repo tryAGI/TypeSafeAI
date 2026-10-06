@@ -19,8 +19,8 @@ namespace TypeSafeAI.Generated
         /// What the model should decide when choosing an option.
         /// </summary>
         [global::System.Text.Json.Serialization.JsonPropertyName("instructions")]
-        [global::System.Text.Json.Serialization.JsonConverter(typeof(global::TypeSafeAI.Generated.JsonConverters.AnyOfJsonConverter<string, object, global::System.Collections.Generic.IList<object>, object>))]
-        public global::TypeSafeAI.Generated.AnyOf<string, object, global::System.Collections.Generic.IList<object>, object>? Instructions { get; set; }
+        [global::System.Text.Json.Serialization.JsonConverter(typeof(global::TypeSafeAI.Generated.JsonConverters.AnyOfJsonConverter<string, object, global::System.Collections.Generic.IList<object>>))]
+        public global::TypeSafeAI.Generated.AnyOf<string, object, global::System.Collections.Generic.IList<object>>? Instructions { get; set; }
 
         /// <summary>
         /// Choice names and descriptions of when each applies. A choice without a description is interpreted by its name alone.
@@ -52,7 +52,7 @@ namespace TypeSafeAI.Generated
 #endif
         public ChoiceQuestion(
             object criteria,
-            global::TypeSafeAI.Generated.AnyOf<string, object, global::System.Collections.Generic.IList<object>, object>? instructions,
+            global::TypeSafeAI.Generated.AnyOf<string, object, global::System.Collections.Generic.IList<object>>? instructions,
             string type = "choice")
         {
             this.Type = type;

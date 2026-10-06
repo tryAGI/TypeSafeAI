@@ -23,19 +23,19 @@ namespace TypeSafeAI.Generated
 
             typeof(global::TypeSafeAI.Generated.JsonConverters.QuestionJsonConverter),
 
-            typeof(global::TypeSafeAI.Generated.JsonConverters.AnyOfJsonConverter<string, object, global::System.Collections.Generic.IList<object>, object>),
-
-            typeof(global::TypeSafeAI.Generated.JsonConverters.AnyOfJsonConverter<string, object, global::System.Collections.Generic.IList<object>, object>),
-
-            typeof(global::TypeSafeAI.Generated.JsonConverters.AnyOfJsonConverter<string, object, global::System.Collections.Generic.IList<object>, object>),
-
-            typeof(global::TypeSafeAI.Generated.JsonConverters.AnyOfJsonConverter<string, object, global::System.Collections.Generic.IList<object>, object>),
-
-            typeof(global::TypeSafeAI.Generated.JsonConverters.AnyOfJsonConverter<string, object, global::System.Collections.Generic.IList<object>, object>),
+            typeof(global::TypeSafeAI.Generated.JsonConverters.AnyOfJsonConverter<string, object, global::System.Collections.Generic.IList<object>>),
 
             typeof(global::TypeSafeAI.Generated.JsonConverters.AnyOfJsonConverter<string, object, global::System.Collections.Generic.IList<object>>),
 
-            typeof(global::TypeSafeAI.Generated.JsonConverters.AnyOfJsonConverter<string, object, global::System.Collections.Generic.IList<object>, object>),
+            typeof(global::TypeSafeAI.Generated.JsonConverters.AnyOfJsonConverter<string, object, global::System.Collections.Generic.IList<object>>),
+
+            typeof(global::TypeSafeAI.Generated.JsonConverters.AnyOfJsonConverter<string, object, global::System.Collections.Generic.IList<object>>),
+
+            typeof(global::TypeSafeAI.Generated.JsonConverters.AnyOfJsonConverter<string, object, global::System.Collections.Generic.IList<object>>),
+
+            typeof(global::TypeSafeAI.Generated.JsonConverters.AnyOfJsonConverter<string, object, global::System.Collections.Generic.IList<object>>),
+
+            typeof(global::TypeSafeAI.Generated.JsonConverters.AnyOfJsonConverter<string, object, global::System.Collections.Generic.IList<object>>),
 
             typeof(global::TypeSafeAI.Generated.JsonConverters.AnyOfJsonConverter<string, object, global::System.Collections.Generic.IList<object>>),
 
@@ -58,7 +58,7 @@ namespace TypeSafeAI.Generated
     [global::System.Text.Json.Serialization.JsonSerializable(typeof(double))]
     [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::System.Collections.Generic.Dictionary<string, double>))]
     [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::TypeSafeAI.Generated.ChoiceQuestion))]
-    [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::TypeSafeAI.Generated.AnyOf<string, object, global::System.Collections.Generic.IList<object>, object>), TypeInfoPropertyName = "AnyOfStringObjectIListObjectObject2")]
+    [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::TypeSafeAI.Generated.AnyOf<string, object, global::System.Collections.Generic.IList<object>>), TypeInfoPropertyName = "AnyOfStringObjectIListObject2")]
     [global::System.Text.Json.Serialization.JsonSerializable(typeof(object))]
     [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::System.Collections.Generic.IList<object>))]
     [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::TypeSafeAI.Generated.HTTPValidationError))]
@@ -73,7 +73,6 @@ namespace TypeSafeAI.Generated
     [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::TypeSafeAI.Generated.ScoreQuestion))]
     [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::TypeSafeAI.Generated.QuestionDiscriminator))]
     [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::TypeSafeAI.Generated.QuestionDiscriminatorType), TypeInfoPropertyName = "QuestionDiscriminatorType2")]
-    [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::TypeSafeAI.Generated.AnyOf<string, object, global::System.Collections.Generic.IList<object>>), TypeInfoPropertyName = "AnyOfStringObjectIListObject2")]
     [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::System.Collections.Generic.IList<global::TypeSafeAI.Generated.AnyOf<string, object, global::System.Collections.Generic.IList<object>>>))]
     [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::TypeSafeAI.Generated.SystemOneRequest))]
     [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::System.Collections.Generic.Dictionary<string, global::TypeSafeAI.Generated.Question>))]
@@ -83,10 +82,9 @@ namespace TypeSafeAI.Generated
     [global::System.Text.Json.Serialization.JsonSerializable(typeof(int))]
     [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::System.Collections.Generic.IList<global::TypeSafeAI.Generated.AnyOf<string, int?>>))]
     [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::TypeSafeAI.Generated.AnyOf<string, int?>), TypeInfoPropertyName = "AnyOfStringInt322")]
-    [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::TypeSafeAI.Generated.AnyOf<string, object, global::System.Collections.Generic.List<object>, object>))]
+    [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::TypeSafeAI.Generated.AnyOf<string, object, global::System.Collections.Generic.List<object>>))]
     [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::System.Collections.Generic.List<global::TypeSafeAI.Generated.ValidationError>))]
     [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::System.Collections.Generic.List<global::TypeSafeAI.Generated.ModelMetadata>))]
-    [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::TypeSafeAI.Generated.AnyOf<string, object, global::System.Collections.Generic.List<object>>))]
     [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::System.Collections.Generic.List<global::TypeSafeAI.Generated.AnyOf<string, object, global::System.Collections.Generic.List<object>>>))]
     [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::System.Collections.Generic.List<global::TypeSafeAI.Generated.AnyOf<string, int?>>))]
     public sealed partial class SourceGenerationContext : global::System.Text.Json.Serialization.JsonSerializerContext
