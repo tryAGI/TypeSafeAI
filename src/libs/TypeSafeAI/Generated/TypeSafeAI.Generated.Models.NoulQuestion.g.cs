@@ -19,8 +19,8 @@ namespace TypeSafeAI.Generated
         /// The yes/no question or statement to evaluate.
         /// </summary>
         [global::System.Text.Json.Serialization.JsonPropertyName("instructions")]
-        [global::System.Text.Json.Serialization.JsonConverter(typeof(global::TypeSafeAI.Generated.JsonConverters.AnyOfJsonConverter<string, object, global::System.Collections.Generic.IList<object>, object>))]
-        public global::TypeSafeAI.Generated.AnyOf<string, object, global::System.Collections.Generic.IList<object>, object>? Instructions { get; set; }
+        [global::System.Text.Json.Serialization.JsonConverter(typeof(global::TypeSafeAI.Generated.JsonConverters.AnyOfJsonConverter<string, object, global::System.Collections.Generic.IList<object>>))]
+        public global::TypeSafeAI.Generated.AnyOf<string, object, global::System.Collections.Generic.IList<object>>? Instructions { get; set; }
 
         /// <summary>
         /// Criteria clarifying what counts as a yes or no answer.
@@ -50,7 +50,7 @@ namespace TypeSafeAI.Generated
         [global::System.Diagnostics.CodeAnalysis.SetsRequiredMembers]
 #endif
         public NoulQuestion(
-            global::TypeSafeAI.Generated.AnyOf<string, object, global::System.Collections.Generic.IList<object>, object>? instructions,
+            global::TypeSafeAI.Generated.AnyOf<string, object, global::System.Collections.Generic.IList<object>>? instructions,
             global::TypeSafeAI.Generated.NoulCriteria? criteria,
             string type = "noul")
         {

@@ -73,7 +73,7 @@ namespace TypeSafeAI.Generated
         /// <summary>
         ///
         /// </summary>
-        public global::TypeSafeAI.Generated.AnyOf<string, object, global::System.Collections.Generic.IList<object>, object>? Type10 { get; set; }
+        public global::TypeSafeAI.Generated.AnyOf<string, object, global::System.Collections.Generic.IList<object>>? Type10 { get; set; }
         /// <summary>
         ///
         /// </summary>
@@ -133,48 +133,44 @@ namespace TypeSafeAI.Generated
         /// <summary>
         ///
         /// </summary>
-        public global::TypeSafeAI.Generated.AnyOf<string, object, global::System.Collections.Generic.IList<object>>? Type25 { get; set; }
+        public global::System.Collections.Generic.IList<global::TypeSafeAI.Generated.AnyOf<string, object, global::System.Collections.Generic.IList<object>>>? Type25 { get; set; }
         /// <summary>
         ///
         /// </summary>
-        public global::System.Collections.Generic.IList<global::TypeSafeAI.Generated.AnyOf<string, object, global::System.Collections.Generic.IList<object>>>? Type26 { get; set; }
+        public global::TypeSafeAI.Generated.SystemOneRequest? Type26 { get; set; }
         /// <summary>
         ///
         /// </summary>
-        public global::TypeSafeAI.Generated.SystemOneRequest? Type27 { get; set; }
+        public global::System.Collections.Generic.Dictionary<string, global::TypeSafeAI.Generated.Question>? Type27 { get; set; }
         /// <summary>
         ///
         /// </summary>
-        public global::System.Collections.Generic.Dictionary<string, global::TypeSafeAI.Generated.Question>? Type28 { get; set; }
+        public global::TypeSafeAI.Generated.SystemOneResponse? Type28 { get; set; }
         /// <summary>
         ///
         /// </summary>
-        public global::TypeSafeAI.Generated.SystemOneResponse? Type29 { get; set; }
+        public global::System.Collections.Generic.Dictionary<string, global::TypeSafeAI.Generated.Answer>? Type29 { get; set; }
         /// <summary>
         ///
         /// </summary>
-        public global::System.Collections.Generic.Dictionary<string, global::TypeSafeAI.Generated.Answer>? Type30 { get; set; }
+        public global::TypeSafeAI.Generated.Usage? Type30 { get; set; }
         /// <summary>
         ///
         /// </summary>
-        public global::TypeSafeAI.Generated.Usage? Type31 { get; set; }
+        public int? Type31 { get; set; }
         /// <summary>
         ///
         /// </summary>
-        public int? Type32 { get; set; }
+        public global::System.Collections.Generic.IList<global::TypeSafeAI.Generated.AnyOf<string, int?>>? Type32 { get; set; }
         /// <summary>
         ///
         /// </summary>
-        public global::System.Collections.Generic.IList<global::TypeSafeAI.Generated.AnyOf<string, int?>>? Type33 { get; set; }
-        /// <summary>
-        ///
-        /// </summary>
-        public global::TypeSafeAI.Generated.AnyOf<string, int?>? Type34 { get; set; }
+        public global::TypeSafeAI.Generated.AnyOf<string, int?>? Type33 { get; set; }
 
         /// <summary>
         ///
         /// </summary>
-        public global::TypeSafeAI.Generated.AnyOf<string, object, global::System.Collections.Generic.List<object>, object>? ListType0 { get; set; }
+        public global::TypeSafeAI.Generated.AnyOf<string, object, global::System.Collections.Generic.List<object>>? ListType0 { get; set; }
         /// <summary>
         ///
         /// </summary>
@@ -190,14 +186,10 @@ namespace TypeSafeAI.Generated
         /// <summary>
         ///
         /// </summary>
-        public global::TypeSafeAI.Generated.AnyOf<string, object, global::System.Collections.Generic.List<object>>? ListType4 { get; set; }
+        public global::System.Collections.Generic.List<global::TypeSafeAI.Generated.AnyOf<string, object, global::System.Collections.Generic.List<object>>>? ListType4 { get; set; }
         /// <summary>
         ///
         /// </summary>
-        public global::System.Collections.Generic.List<global::TypeSafeAI.Generated.AnyOf<string, object, global::System.Collections.Generic.List<object>>>? ListType5 { get; set; }
-        /// <summary>
-        ///
-        /// </summary>
-        public global::System.Collections.Generic.List<global::TypeSafeAI.Generated.AnyOf<string, int?>>? ListType6 { get; set; }
+        public global::System.Collections.Generic.List<global::TypeSafeAI.Generated.AnyOf<string, int?>>? ListType5 { get; set; }
     }
 }

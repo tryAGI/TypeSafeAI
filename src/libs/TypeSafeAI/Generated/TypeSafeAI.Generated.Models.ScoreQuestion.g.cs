@@ -19,8 +19,8 @@ namespace TypeSafeAI.Generated
         /// What the model should rate.
         /// </summary>
         [global::System.Text.Json.Serialization.JsonPropertyName("instructions")]
-        [global::System.Text.Json.Serialization.JsonConverter(typeof(global::TypeSafeAI.Generated.JsonConverters.AnyOfJsonConverter<string, object, global::System.Collections.Generic.IList<object>, object>))]
-        public global::TypeSafeAI.Generated.AnyOf<string, object, global::System.Collections.Generic.IList<object>, object>? Instructions { get; set; }
+        [global::System.Text.Json.Serialization.JsonConverter(typeof(global::TypeSafeAI.Generated.JsonConverters.AnyOfJsonConverter<string, object, global::System.Collections.Generic.IList<object>>))]
+        public global::TypeSafeAI.Generated.AnyOf<string, object, global::System.Collections.Generic.IList<object>>? Instructions { get; set; }
 
         /// <summary>
         /// Ordered descriptions of the score levels. Each description's position determines its score, starting at zero.
@@ -52,7 +52,7 @@ namespace TypeSafeAI.Generated
 #endif
         public ScoreQuestion(
             global::System.Collections.Generic.IList<global::TypeSafeAI.Generated.AnyOf<string, object, global::System.Collections.Generic.IList<object>>> criteria,
-            global::TypeSafeAI.Generated.AnyOf<string, object, global::System.Collections.Generic.IList<object>, object>? instructions,
+            global::TypeSafeAI.Generated.AnyOf<string, object, global::System.Collections.Generic.IList<object>>? instructions,
             string type = "score")
         {
             this.Type = type;

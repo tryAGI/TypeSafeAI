@@ -12,15 +12,15 @@ namespace TypeSafeAI.Generated
         /// What counts as a yes answer.
         /// </summary>
         [global::System.Text.Json.Serialization.JsonPropertyName("true")]
-        [global::System.Text.Json.Serialization.JsonConverter(typeof(global::TypeSafeAI.Generated.JsonConverters.AnyOfJsonConverter<string, object, global::System.Collections.Generic.IList<object>, object>))]
-        public global::TypeSafeAI.Generated.AnyOf<string, object, global::System.Collections.Generic.IList<object>, object>? True { get; set; }
+        [global::System.Text.Json.Serialization.JsonConverter(typeof(global::TypeSafeAI.Generated.JsonConverters.AnyOfJsonConverter<string, object, global::System.Collections.Generic.IList<object>>))]
+        public global::TypeSafeAI.Generated.AnyOf<string, object, global::System.Collections.Generic.IList<object>>? True { get; set; }
 
         /// <summary>
         /// What counts as a no answer.
         /// </summary>
         [global::System.Text.Json.Serialization.JsonPropertyName("false")]
-        [global::System.Text.Json.Serialization.JsonConverter(typeof(global::TypeSafeAI.Generated.JsonConverters.AnyOfJsonConverter<string, object, global::System.Collections.Generic.IList<object>, object>))]
-        public global::TypeSafeAI.Generated.AnyOf<string, object, global::System.Collections.Generic.IList<object>, object>? False { get; set; }
+        [global::System.Text.Json.Serialization.JsonConverter(typeof(global::TypeSafeAI.Generated.JsonConverters.AnyOfJsonConverter<string, object, global::System.Collections.Generic.IList<object>>))]
+        public global::TypeSafeAI.Generated.AnyOf<string, object, global::System.Collections.Generic.IList<object>>? False { get; set; }
 
         /// <summary>
         /// Raw JSON properties that are not explicitly defined in the schema
@@ -41,8 +41,8 @@ namespace TypeSafeAI.Generated
         [global::System.Diagnostics.CodeAnalysis.SetsRequiredMembers]
 #endif
         public NoulCriteria(
-            global::TypeSafeAI.Generated.AnyOf<string, object, global::System.Collections.Generic.IList<object>, object>? @true,
-            global::TypeSafeAI.Generated.AnyOf<string, object, global::System.Collections.Generic.IList<object>, object>? @false)
+            global::TypeSafeAI.Generated.AnyOf<string, object, global::System.Collections.Generic.IList<object>>? @true,
+            global::TypeSafeAI.Generated.AnyOf<string, object, global::System.Collections.Generic.IList<object>>? @false)
         {
             this.True = @true;
             this.False = @false;
