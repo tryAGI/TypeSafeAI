@@ -282,9 +282,9 @@ public sealed class TypeSafeClient : ITypeSafeClient, IDisposable, IAsyncDisposa
     {
         var questionElement = WriteQuestions(questions);
         var request = new SystemOneRequest(
-            TypeSafeAI.Generated.AnyOf<string, object, IList<object>>.FromValue2(state.Value),
-            model,
-            questionElement.EnumerateObject().ToDictionary(
+            state: TypeSafeAI.Generated.AnyOf<string, object, IList<object>>.FromValue2(state.Value),
+            model: model,
+            questions: questionElement.EnumerateObject().ToDictionary(
                 static property => property.Name,
                 property => JsonSerializer.Deserialize(property.Value,
                     (JsonTypeInfo<Generated.Question>)_raw.JsonSerializerContext.GetTypeInfo(typeof(Generated.Question))!),
