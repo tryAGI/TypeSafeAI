@@ -28,13 +28,6 @@ namespace TypeSafeAI.Generated.JsonConverters
                                throw new global::System.InvalidOperationException($"Cannot get type info for {nameof(global::TypeSafeAI.Generated.NoulAnswer)}");
                 noul = global::System.Text.Json.JsonSerializer.Deserialize(ref reader, typeInfo);
             }
-            global::TypeSafeAI.Generated.ScoreAnswer? score = default;
-            if (discriminator?.Type == global::TypeSafeAI.Generated.AnswerDiscriminatorType.Score)
-            {
-                var typeInfo = typeInfoResolver.GetTypeInfo(typeof(global::TypeSafeAI.Generated.ScoreAnswer), options) as global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<global::TypeSafeAI.Generated.ScoreAnswer> ??
-                               throw new global::System.InvalidOperationException($"Cannot get type info for {nameof(global::TypeSafeAI.Generated.ScoreAnswer)}");
-                score = global::System.Text.Json.JsonSerializer.Deserialize(ref reader, typeInfo);
-            }
             global::TypeSafeAI.Generated.ChoiceAnswer? choice = default;
             if (discriminator?.Type == global::TypeSafeAI.Generated.AnswerDiscriminatorType.Choice)
             {
@@ -42,14 +35,21 @@ namespace TypeSafeAI.Generated.JsonConverters
                                throw new global::System.InvalidOperationException($"Cannot get type info for {nameof(global::TypeSafeAI.Generated.ChoiceAnswer)}");
                 choice = global::System.Text.Json.JsonSerializer.Deserialize(ref reader, typeInfo);
             }
+            global::TypeSafeAI.Generated.ScoreAnswer? score = default;
+            if (discriminator?.Type == global::TypeSafeAI.Generated.AnswerDiscriminatorType.Score)
+            {
+                var typeInfo = typeInfoResolver.GetTypeInfo(typeof(global::TypeSafeAI.Generated.ScoreAnswer), options) as global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<global::TypeSafeAI.Generated.ScoreAnswer> ??
+                               throw new global::System.InvalidOperationException($"Cannot get type info for {nameof(global::TypeSafeAI.Generated.ScoreAnswer)}");
+                score = global::System.Text.Json.JsonSerializer.Deserialize(ref reader, typeInfo);
+            }
 
             var __value = new global::TypeSafeAI.Generated.Answer(
                 discriminator?.Type,
                 noul,
 
-                score,
+                choice,
 
-                choice
+                score
                 );
 
             return __value;
@@ -70,17 +70,17 @@ namespace TypeSafeAI.Generated.JsonConverters
                                throw new global::System.InvalidOperationException($"Cannot get type info for {typeof(global::TypeSafeAI.Generated.NoulAnswer).Name}");
                 global::System.Text.Json.JsonSerializer.Serialize(writer, value.PickNoul(), typeInfo);
             }
-            else if (value.IsScore)
-            {
-                var typeInfo = typeInfoResolver.GetTypeInfo(typeof(global::TypeSafeAI.Generated.ScoreAnswer), options) as global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<global::TypeSafeAI.Generated.ScoreAnswer?> ??
-                               throw new global::System.InvalidOperationException($"Cannot get type info for {typeof(global::TypeSafeAI.Generated.ScoreAnswer).Name}");
-                global::System.Text.Json.JsonSerializer.Serialize(writer, value.PickScore(), typeInfo);
-            }
             else if (value.IsChoice)
             {
                 var typeInfo = typeInfoResolver.GetTypeInfo(typeof(global::TypeSafeAI.Generated.ChoiceAnswer), options) as global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<global::TypeSafeAI.Generated.ChoiceAnswer?> ??
                                throw new global::System.InvalidOperationException($"Cannot get type info for {typeof(global::TypeSafeAI.Generated.ChoiceAnswer).Name}");
                 global::System.Text.Json.JsonSerializer.Serialize(writer, value.PickChoice(), typeInfo);
+            }
+            else if (value.IsScore)
+            {
+                var typeInfo = typeInfoResolver.GetTypeInfo(typeof(global::TypeSafeAI.Generated.ScoreAnswer), options) as global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<global::TypeSafeAI.Generated.ScoreAnswer?> ??
+                               throw new global::System.InvalidOperationException($"Cannot get type info for {typeof(global::TypeSafeAI.Generated.ScoreAnswer).Name}");
+                global::System.Text.Json.JsonSerializer.Serialize(writer, value.PickScore(), typeInfo);
             }
         }
     }

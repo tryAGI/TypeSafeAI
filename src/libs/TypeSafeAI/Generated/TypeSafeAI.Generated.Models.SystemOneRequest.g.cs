@@ -9,19 +9,19 @@ namespace TypeSafeAI.Generated
     public sealed partial class SystemOneRequest
     {
         /// <summary>
+        /// Name or alias of the model to use. Available names are returned by GET /v1/models.
+        /// </summary>
+        [global::System.Text.Json.Serialization.JsonPropertyName("model")]
+        [global::System.Text.Json.Serialization.JsonRequired]
+        public required string Model { get; set; }
+
+        /// <summary>
         /// The content all questions in this request refer to.
         /// </summary>
         [global::System.Text.Json.Serialization.JsonPropertyName("state")]
         [global::System.Text.Json.Serialization.JsonConverter(typeof(global::TypeSafeAI.Generated.JsonConverters.AnyOfJsonConverter<string, object, global::System.Collections.Generic.IList<object>>))]
         [global::System.Text.Json.Serialization.JsonRequired]
         public required global::TypeSafeAI.Generated.AnyOf<string, object, global::System.Collections.Generic.IList<object>> State { get; set; }
-
-        /// <summary>
-        /// Name or alias of the model to use. Available names are returned by GET /v1/models.
-        /// </summary>
-        [global::System.Text.Json.Serialization.JsonPropertyName("model")]
-        [global::System.Text.Json.Serialization.JsonRequired]
-        public required string Model { get; set; }
 
         /// <summary>
         /// Questions to ask about the content, each with a name you choose. The response uses those names to identify the answers.
@@ -39,11 +39,11 @@ namespace TypeSafeAI.Generated
         /// <summary>
         /// Initializes a new instance of the <see cref="SystemOneRequest" /> class.
         /// </summary>
-        /// <param name="state">
-        /// The content all questions in this request refer to.
-        /// </param>
         /// <param name="model">
         /// Name or alias of the model to use. Available names are returned by GET /v1/models.
+        /// </param>
+        /// <param name="state">
+        /// The content all questions in this request refer to.
         /// </param>
         /// <param name="questions">
         /// Questions to ask about the content, each with a name you choose. The response uses those names to identify the answers.
@@ -52,12 +52,12 @@ namespace TypeSafeAI.Generated
         [global::System.Diagnostics.CodeAnalysis.SetsRequiredMembers]
 #endif
         public SystemOneRequest(
-            global::TypeSafeAI.Generated.AnyOf<string, object, global::System.Collections.Generic.IList<object>> state,
             string model,
+            global::TypeSafeAI.Generated.AnyOf<string, object, global::System.Collections.Generic.IList<object>> state,
             global::System.Collections.Generic.Dictionary<string, global::TypeSafeAI.Generated.Question> questions)
         {
-            this.State = state;
             this.Model = model ?? throw new global::System.ArgumentNullException(nameof(model));
+            this.State = state;
             this.Questions = questions ?? throw new global::System.ArgumentNullException(nameof(questions));
         }
 
