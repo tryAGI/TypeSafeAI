@@ -5,7 +5,7 @@ namespace TypeSafeAI.Generated
     public partial interface IRawTypeSafeClient
     {
         /// <summary>
-        /// Models V1<br/>
+        /// List models<br/>
         /// List the models and aliases available to the authenticated account.<br/>
         /// Pass a returned model name as `model` in a POST /v1/systemone request.
         /// </summary>
@@ -16,7 +16,7 @@ namespace TypeSafeAI.Generated
             global::TypeSafeAI.Generated.AutoSDKRequestOptions? requestOptions = default,
             global::System.Threading.CancellationToken cancellationToken = default);
         /// <summary>
-        /// Models V1<br/>
+        /// List models<br/>
         /// List the models and aliases available to the authenticated account.<br/>
         /// Pass a returned model name as `model` in a POST /v1/systemone request.
         /// </summary>

@@ -52,43 +52,6 @@ namespace TypeSafeAI.Generated
             : throw new global::System.InvalidOperationException($"Expected union variant 'Noul' but the value was {ToString()}.");
 
         /// <summary>
-        /// An expected score with its rubric, confidence, and score-level probabilities.
-        /// </summary>
-#if NET6_0_OR_GREATER
-        public global::TypeSafeAI.Generated.ScoreAnswer? Score { get; init; }
-#else
-        public global::TypeSafeAI.Generated.ScoreAnswer? Score { get; }
-#endif
-
-        /// <summary>
-        ///
-        /// </summary>
-#if NET6_0_OR_GREATER
-        [global::System.Diagnostics.CodeAnalysis.MemberNotNullWhen(true, nameof(Score))]
-#endif
-        public bool IsScore => Score != null;
-
-        /// <summary>
-        ///
-        /// </summary>
-        public bool TryPickScore(
-#if NET6_0_OR_GREATER
-            [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
-#endif
-            out global::TypeSafeAI.Generated.ScoreAnswer? value)
-        {
-            value = Score;
-            return IsScore;
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        public global::TypeSafeAI.Generated.ScoreAnswer PickScore() => Score is { } value
-            ? value
-            : throw new global::System.InvalidOperationException($"Expected union variant 'Score' but the value was {ToString()}.");
-
-        /// <summary>
         /// The selected choice, confidence, and probabilities for a choice question.
         /// </summary>
 #if NET6_0_OR_GREATER
@@ -124,6 +87,43 @@ namespace TypeSafeAI.Generated
         public global::TypeSafeAI.Generated.ChoiceAnswer PickChoice() => Choice is { } value
             ? value
             : throw new global::System.InvalidOperationException($"Expected union variant 'Choice' but the value was {ToString()}.");
+
+        /// <summary>
+        /// An expected score with its rubric, confidence, and score-level probabilities.
+        /// </summary>
+#if NET6_0_OR_GREATER
+        public global::TypeSafeAI.Generated.ScoreAnswer? Score { get; init; }
+#else
+        public global::TypeSafeAI.Generated.ScoreAnswer? Score { get; }
+#endif
+
+        /// <summary>
+        ///
+        /// </summary>
+#if NET6_0_OR_GREATER
+        [global::System.Diagnostics.CodeAnalysis.MemberNotNullWhen(true, nameof(Score))]
+#endif
+        public bool IsScore => Score != null;
+
+        /// <summary>
+        ///
+        /// </summary>
+        public bool TryPickScore(
+#if NET6_0_OR_GREATER
+            [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+#endif
+            out global::TypeSafeAI.Generated.ScoreAnswer? value)
+        {
+            value = Score;
+            return IsScore;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        public global::TypeSafeAI.Generated.ScoreAnswer PickScore() => Score is { } value
+            ? value
+            : throw new global::System.InvalidOperationException($"Expected union variant 'Score' but the value was {ToString()}.");
         /// <summary>
         ///
         /// </summary>
@@ -146,29 +146,6 @@ namespace TypeSafeAI.Generated
         ///
         /// </summary>
         public static Answer FromNoul(global::TypeSafeAI.Generated.NoulAnswer? value) => new Answer(value);
-
-        /// <summary>
-        ///
-        /// </summary>
-        public static implicit operator Answer(global::TypeSafeAI.Generated.ScoreAnswer value) => new Answer((global::TypeSafeAI.Generated.ScoreAnswer?)value);
-
-        /// <summary>
-        ///
-        /// </summary>
-        public static implicit operator global::TypeSafeAI.Generated.ScoreAnswer?(Answer @this) => @this.Score;
-
-        /// <summary>
-        ///
-        /// </summary>
-        public Answer(global::TypeSafeAI.Generated.ScoreAnswer? value)
-        {
-            Score = value;
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        public static Answer FromScore(global::TypeSafeAI.Generated.ScoreAnswer? value) => new Answer(value);
 
         /// <summary>
         ///
@@ -196,26 +173,49 @@ namespace TypeSafeAI.Generated
         /// <summary>
         ///
         /// </summary>
+        public static implicit operator Answer(global::TypeSafeAI.Generated.ScoreAnswer value) => new Answer((global::TypeSafeAI.Generated.ScoreAnswer?)value);
+
+        /// <summary>
+        ///
+        /// </summary>
+        public static implicit operator global::TypeSafeAI.Generated.ScoreAnswer?(Answer @this) => @this.Score;
+
+        /// <summary>
+        ///
+        /// </summary>
+        public Answer(global::TypeSafeAI.Generated.ScoreAnswer? value)
+        {
+            Score = value;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        public static Answer FromScore(global::TypeSafeAI.Generated.ScoreAnswer? value) => new Answer(value);
+
+        /// <summary>
+        ///
+        /// </summary>
         public Answer(
             global::TypeSafeAI.Generated.AnswerDiscriminatorType? type,
             global::TypeSafeAI.Generated.NoulAnswer? noul,
-            global::TypeSafeAI.Generated.ScoreAnswer? score,
-            global::TypeSafeAI.Generated.ChoiceAnswer? choice
+            global::TypeSafeAI.Generated.ChoiceAnswer? choice,
+            global::TypeSafeAI.Generated.ScoreAnswer? score
             )
         {
             Type = type;
 
             Noul = noul;
-            Score = score;
             Choice = choice;
+            Score = score;
         }
 
         /// <summary>
         ///
         /// </summary>
         public object? Object =>
-            Choice as object ??
             Score as object ??
+            Choice as object ??
             Noul as object
             ;
 
@@ -224,8 +224,8 @@ namespace TypeSafeAI.Generated
         /// </summary>
         public override string? ToString() =>
             Noul?.ToString() ??
-            Score?.ToString() ??
-            Choice?.ToString()
+            Choice?.ToString() ??
+            Score?.ToString()
             ;
 
         /// <summary>
@@ -233,7 +233,7 @@ namespace TypeSafeAI.Generated
         /// </summary>
         public bool Validate()
         {
-            return IsNoul && !IsScore && !IsChoice || !IsNoul && IsScore && !IsChoice || !IsNoul && !IsScore && IsChoice;
+            return IsNoul && !IsChoice && !IsScore || !IsNoul && IsChoice && !IsScore || !IsNoul && !IsChoice && IsScore;
         }
 
         /// <summary>
@@ -241,8 +241,8 @@ namespace TypeSafeAI.Generated
         /// </summary>
         public TResult? Match<TResult>(
             global::System.Func<global::TypeSafeAI.Generated.NoulAnswer, TResult>? noul = null,
-            global::System.Func<global::TypeSafeAI.Generated.ScoreAnswer, TResult>? score = null,
             global::System.Func<global::TypeSafeAI.Generated.ChoiceAnswer, TResult>? choice = null,
+            global::System.Func<global::TypeSafeAI.Generated.ScoreAnswer, TResult>? score = null,
             bool validate = true)
         {
             if (validate)
@@ -254,13 +254,13 @@ namespace TypeSafeAI.Generated
             {
                 return noul(__value0);
             }
-            else if (Score is { } __value1 && score != null)
+            else if (Choice is { } __value1 && choice != null)
             {
-                return score(__value1);
+                return choice(__value1);
             }
-            else if (Choice is { } __value2 && choice != null)
+            else if (Score is { } __value2 && score != null)
             {
-                return choice(__value2);
+                return score(__value2);
             }
 
             return default(TResult);
@@ -272,9 +272,9 @@ namespace TypeSafeAI.Generated
         public void Match(
             global::System.Action<global::TypeSafeAI.Generated.NoulAnswer>? noul = null,
 
-            global::System.Action<global::TypeSafeAI.Generated.ScoreAnswer>? score = null,
-
             global::System.Action<global::TypeSafeAI.Generated.ChoiceAnswer>? choice = null,
+
+            global::System.Action<global::TypeSafeAI.Generated.ScoreAnswer>? score = null,
             bool validate = true)
         {
             if (validate)
@@ -286,13 +286,13 @@ namespace TypeSafeAI.Generated
             {
                 noul?.Invoke(__value0);
             }
-            else if (Score is { } __value1)
+            else if (Choice is { } __value1)
             {
-                score?.Invoke(__value1);
+                choice?.Invoke(__value1);
             }
-            else if (Choice is { } __value2)
+            else if (Score is { } __value2)
             {
-                choice?.Invoke(__value2);
+                score?.Invoke(__value2);
             }
         }
 
@@ -301,8 +301,8 @@ namespace TypeSafeAI.Generated
         /// </summary>
         public void Switch(
             global::System.Action<global::TypeSafeAI.Generated.NoulAnswer>? noul = null,
-            global::System.Action<global::TypeSafeAI.Generated.ScoreAnswer>? score = null,
             global::System.Action<global::TypeSafeAI.Generated.ChoiceAnswer>? choice = null,
+            global::System.Action<global::TypeSafeAI.Generated.ScoreAnswer>? score = null,
             bool validate = true)
         {
             if (validate)
@@ -314,13 +314,13 @@ namespace TypeSafeAI.Generated
             {
                 noul?.Invoke(__value0);
             }
-            else if (Score is { } __value1)
+            else if (Choice is { } __value1)
             {
-                score?.Invoke(__value1);
+                choice?.Invoke(__value1);
             }
-            else if (Choice is { } __value2)
+            else if (Score is { } __value2)
             {
-                choice?.Invoke(__value2);
+                score?.Invoke(__value2);
             }
         }
 
@@ -333,10 +333,10 @@ namespace TypeSafeAI.Generated
             {
                 Noul,
                 typeof(global::TypeSafeAI.Generated.NoulAnswer),
-                Score,
-                typeof(global::TypeSafeAI.Generated.ScoreAnswer),
                 Choice,
                 typeof(global::TypeSafeAI.Generated.ChoiceAnswer),
+                Score,
+                typeof(global::TypeSafeAI.Generated.ScoreAnswer),
             };
             const int offset = unchecked((int)2166136261);
             const int prime = 16777619;
@@ -354,8 +354,8 @@ namespace TypeSafeAI.Generated
         {
             return
                 global::System.Collections.Generic.EqualityComparer<global::TypeSafeAI.Generated.NoulAnswer?>.Default.Equals(Noul, other.Noul) &&
-                global::System.Collections.Generic.EqualityComparer<global::TypeSafeAI.Generated.ScoreAnswer?>.Default.Equals(Score, other.Score) &&
-                global::System.Collections.Generic.EqualityComparer<global::TypeSafeAI.Generated.ChoiceAnswer?>.Default.Equals(Choice, other.Choice)
+                global::System.Collections.Generic.EqualityComparer<global::TypeSafeAI.Generated.ChoiceAnswer?>.Default.Equals(Choice, other.Choice) &&
+                global::System.Collections.Generic.EqualityComparer<global::TypeSafeAI.Generated.ScoreAnswer?>.Default.Equals(Score, other.Score)
                 ;
         }
 

@@ -40,7 +40,7 @@ namespace TypeSafeAI.Generated
             ref string content);
 
         /// <summary>
-        /// Models V1<br/>
+        /// List models<br/>
         /// List the models and aliases available to the authenticated account.<br/>
         /// Pass a returned model name as `model` in a POST /v1/systemone request.
         /// </summary>
@@ -59,7 +59,7 @@ namespace TypeSafeAI.Generated
             return __response.Body;
         }
         /// <summary>
-        /// Models V1<br/>
+        /// List models<br/>
         /// List the models and aliases available to the authenticated account.<br/>
         /// Pass a returned model name as `model` in a POST /v1/systemone request.
         /// </summary>

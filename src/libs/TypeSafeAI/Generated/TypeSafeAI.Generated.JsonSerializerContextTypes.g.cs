@@ -41,11 +41,11 @@ namespace TypeSafeAI.Generated
         /// <summary>
         ///
         /// </summary>
-        public global::TypeSafeAI.Generated.ScoreAnswer? Type2 { get; set; }
+        public global::TypeSafeAI.Generated.ChoiceAnswer? Type2 { get; set; }
         /// <summary>
         ///
         /// </summary>
-        public global::TypeSafeAI.Generated.ChoiceAnswer? Type3 { get; set; }
+        public global::TypeSafeAI.Generated.ScoreAnswer? Type3 { get; set; }
         /// <summary>
         ///
         /// </summary>

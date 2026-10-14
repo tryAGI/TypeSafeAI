@@ -5,7 +5,7 @@ namespace TypeSafeAI.Generated
     public partial interface IRawTypeSafeClient
     {
         /// <summary>
-        /// Systemone<br/>
+        /// System One<br/>
         /// Answer one or more questions about the content supplied in `state`.<br/>
         /// You can mix question types in one request. Answers use the same names as the<br/>
         /// questions, so you can match each result to its question. The response also includes<br/>
@@ -21,7 +21,7 @@ namespace TypeSafeAI.Generated
             global::TypeSafeAI.Generated.AutoSDKRequestOptions? requestOptions = default,
             global::System.Threading.CancellationToken cancellationToken = default);
         /// <summary>
-        /// Systemone<br/>
+        /// System One<br/>
         /// Answer one or more questions about the content supplied in `state`.<br/>
         /// You can mix question types in one request. Answers use the same names as the<br/>
         /// questions, so you can match each result to its question. The response also includes<br/>
@@ -37,17 +37,17 @@ namespace TypeSafeAI.Generated
             global::TypeSafeAI.Generated.AutoSDKRequestOptions? requestOptions = default,
             global::System.Threading.CancellationToken cancellationToken = default);
         /// <summary>
-        /// Systemone<br/>
+        /// System One<br/>
         /// Answer one or more questions about the content supplied in `state`.<br/>
         /// You can mix question types in one request. Answers use the same names as the<br/>
         /// questions, so you can match each result to its question. The response also includes<br/>
         /// the model used and token usage.
         /// </summary>
-        /// <param name="state">
-        /// The content all questions in this request refer to.
-        /// </param>
         /// <param name="model">
         /// Name or alias of the model to use. Available names are returned by GET /v1/models.
+        /// </param>
+        /// <param name="state">
+        /// The content all questions in this request refer to.
         /// </param>
         /// <param name="questions">
         /// Questions to ask about the content, each with a name you choose. The response uses those names to identify the answers.
@@ -56,8 +56,8 @@ namespace TypeSafeAI.Generated
         /// <param name="cancellationToken">The token to cancel the operation with</param>
         /// <exception cref="global::System.InvalidOperationException"></exception>
         global::System.Threading.Tasks.Task<global::TypeSafeAI.Generated.SystemOneResponse> SystemoneV1SystemonePostAsync(
-            global::TypeSafeAI.Generated.AnyOf<string, object, global::System.Collections.Generic.IList<object>> state,
             string model,
+            global::TypeSafeAI.Generated.AnyOf<string, object, global::System.Collections.Generic.IList<object>> state,
             global::System.Collections.Generic.Dictionary<string, global::TypeSafeAI.Generated.Question> questions,
             global::TypeSafeAI.Generated.AutoSDKRequestOptions? requestOptions = default,
             global::System.Threading.CancellationToken cancellationToken = default);
