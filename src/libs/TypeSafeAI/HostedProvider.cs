@@ -111,12 +111,12 @@ internal static class HostedProvider
             var url = "data:" + mediaType + ";base64," + base64;
             if (provider is SystemOneProvider.Perplexity or SystemOneProvider.Inception)
             {
-                inlineState.Add(new JsonObject { ["type"] = "text", ["text"] = "Image named " + name + ":" });
-                inlineState.Add(new JsonObject { ["type"] = "image_url", ["image_url"] = new JsonObject { ["url"] = url } });
+                inlineState.Add((JsonNode)new JsonObject { ["type"] = "text", ["text"] = "Image named " + name + ":" });
+                inlineState.Add((JsonNode)new JsonObject { ["type"] = "image_url", ["image_url"] = new JsonObject { ["url"] = url } });
             }
             else if (provider == SystemOneProvider.SubQ)
-                images.Add(new JsonObject { ["mediaType"] = mediaType, ["base64"] = base64 });
-            else images.Add(JsonValue.Create(url));
+                images.Add((JsonNode)new JsonObject { ["mediaType"] = mediaType, ["base64"] = base64 });
+            else images.Add((JsonNode)JsonValue.Create(url)!);
         }
         if (provider is SystemOneProvider.Perplexity or SystemOneProvider.Inception)
             request.State = AnyOf<string, object, IList<object>>.FromValue2(JsonContent.FromNode(inlineState).Value);
