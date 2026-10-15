@@ -81,8 +81,14 @@ On 2026-10-16, the hosted-provider and Celeris discovery/DI additions passed
 provider URLs and prefixes, per-call auth/query and retries, model metadata,
 malformed discovery responses, image shapes/counts/bytes, unsupported features,
 criterion bounds, GLiDE weighted scores/projection/replay, and environment DI.
-The expanded NativeAOT smoke is queued through host build admission; a successful
-publish and execution are required before claiming native verification for these additions.
+On 2026-10-16, source commit `9eb668041131c25ee1544559d334120b326e10e0`
+was published through host build admission and the resulting macOS arm64 NativeAOT
+executable exited successfully. Its offline fixtures verified Celeris model
+discovery, dependency injection, images/resolution/explanations/replay, hosted
+Decisions image transport, GLiDE expected-score projection/replay, and the existing
+transport, enum labels, structured content, compression, Box, usage, future-answer,
+and AI-function paths. No live inference was performed; provider acceptance,
+accuracy, latency, calibration, and billing remain separate checks.
 
 
 The Celeris provider addition passed the full local suite: 87 tests passed and
