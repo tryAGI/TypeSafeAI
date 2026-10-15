@@ -42,6 +42,13 @@ namespace TypeSafeAI.Generated.JsonConverters
                                throw new global::System.InvalidOperationException($"Cannot get type info for {nameof(global::TypeSafeAI.Generated.ScoreAnswer)}");
                 score = global::System.Text.Json.JsonSerializer.Deserialize(ref reader, typeInfo);
             }
+            global::TypeSafeAI.Generated.BoxAnswer? box = default;
+            if (discriminator?.Type == global::TypeSafeAI.Generated.AnswerDiscriminatorType.Box)
+            {
+                var typeInfo = typeInfoResolver.GetTypeInfo(typeof(global::TypeSafeAI.Generated.BoxAnswer), options) as global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<global::TypeSafeAI.Generated.BoxAnswer> ??
+                               throw new global::System.InvalidOperationException($"Cannot get type info for {nameof(global::TypeSafeAI.Generated.BoxAnswer)}");
+                box = global::System.Text.Json.JsonSerializer.Deserialize(ref reader, typeInfo);
+            }
 
             var __value = new global::TypeSafeAI.Generated.Answer(
                 discriminator?.Type,
@@ -49,7 +56,9 @@ namespace TypeSafeAI.Generated.JsonConverters
 
                 choice,
 
-                score
+                score,
+
+                box
                 );
 
             return __value;
@@ -81,6 +90,12 @@ namespace TypeSafeAI.Generated.JsonConverters
                 var typeInfo = typeInfoResolver.GetTypeInfo(typeof(global::TypeSafeAI.Generated.ScoreAnswer), options) as global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<global::TypeSafeAI.Generated.ScoreAnswer?> ??
                                throw new global::System.InvalidOperationException($"Cannot get type info for {typeof(global::TypeSafeAI.Generated.ScoreAnswer).Name}");
                 global::System.Text.Json.JsonSerializer.Serialize(writer, value.PickScore(), typeInfo);
+            }
+            else if (value.IsBox)
+            {
+                var typeInfo = typeInfoResolver.GetTypeInfo(typeof(global::TypeSafeAI.Generated.BoxAnswer), options) as global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<global::TypeSafeAI.Generated.BoxAnswer?> ??
+                               throw new global::System.InvalidOperationException($"Cannot get type info for {typeof(global::TypeSafeAI.Generated.BoxAnswer).Name}");
+                global::System.Text.Json.JsonSerializer.Serialize(writer, value.PickBox(), typeInfo);
             }
         }
     }

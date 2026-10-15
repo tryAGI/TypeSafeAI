@@ -31,6 +31,12 @@ namespace TypeSafeAI.Generated
         public required global::System.Collections.Generic.Dictionary<string, global::TypeSafeAI.Generated.Question> Questions { get; set; }
 
         /// <summary>
+        /// Media assets keyed by an opaque placeholder (recommend a per-image UUID). Each placeholder, wherever it appears as or inside a string in state, question instructions, or criteria, is replaced with the asset. Image assets require a vision-language model.
+        /// </summary>
+        [global::System.Text.Json.Serialization.JsonPropertyName("assets")]
+        public global::System.Collections.Generic.Dictionary<string, global::TypeSafeAI.Generated.Asset>? Assets { get; set; }
+
+        /// <summary>
         /// Raw JSON properties that are not explicitly defined in the schema
         /// </summary>
         [global::System.Text.Json.Serialization.JsonExtensionData]
@@ -48,17 +54,22 @@ namespace TypeSafeAI.Generated
         /// <param name="questions">
         /// Questions to ask about the content, each with a name you choose. The response uses those names to identify the answers.
         /// </param>
+        /// <param name="assets">
+        /// Media assets keyed by an opaque placeholder (recommend a per-image UUID). Each placeholder, wherever it appears as or inside a string in state, question instructions, or criteria, is replaced with the asset. Image assets require a vision-language model.
+        /// </param>
 #if NET7_0_OR_GREATER
         [global::System.Diagnostics.CodeAnalysis.SetsRequiredMembers]
 #endif
         public SystemOneRequest(
             string model,
             global::TypeSafeAI.Generated.AnyOf<string, object, global::System.Collections.Generic.IList<object>> state,
-            global::System.Collections.Generic.Dictionary<string, global::TypeSafeAI.Generated.Question> questions)
+            global::System.Collections.Generic.Dictionary<string, global::TypeSafeAI.Generated.Question> questions,
+            global::System.Collections.Generic.Dictionary<string, global::TypeSafeAI.Generated.Asset>? assets)
         {
             this.Model = model ?? throw new global::System.ArgumentNullException(nameof(model));
             this.State = state;
             this.Questions = questions ?? throw new global::System.ArgumentNullException(nameof(questions));
+            this.Assets = assets;
         }
 
         /// <summary>

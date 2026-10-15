@@ -27,10 +27,14 @@ namespace TypeSafeAI.Generated
             };
         partial void PrepareSystemoneV1SystemonePostArguments(
             global::System.Net.Http.HttpClient httpClient,
+            ref global::TypeSafeAI.Generated.SystemoneV1SystemonePostTypeSafeDangerZoneImages? typeSafeDangerZoneImages,
+            ref global::TypeSafeAI.Generated.SystemoneV1SystemonePostTypeSafeDangerZoneLongContext? typeSafeDangerZoneLongContext,
             global::TypeSafeAI.Generated.SystemOneRequest request);
         partial void PrepareSystemoneV1SystemonePostRequest(
             global::System.Net.Http.HttpClient httpClient,
             global::System.Net.Http.HttpRequestMessage httpRequestMessage,
+            global::TypeSafeAI.Generated.SystemoneV1SystemonePostTypeSafeDangerZoneImages? typeSafeDangerZoneImages,
+            global::TypeSafeAI.Generated.SystemoneV1SystemonePostTypeSafeDangerZoneLongContext? typeSafeDangerZoneLongContext,
             global::TypeSafeAI.Generated.SystemOneRequest request);
         partial void ProcessSystemoneV1SystemonePostResponse(
             global::System.Net.Http.HttpClient httpClient,
@@ -48,6 +52,8 @@ namespace TypeSafeAI.Generated
         /// questions, so you can match each result to its question. The response also includes<br/>
         /// the model used and token usage.
         /// </summary>
+        /// <param name="typeSafeDangerZoneImages"></param>
+        /// <param name="typeSafeDangerZoneLongContext"></param>
         /// <param name="request"></param>
         /// <param name="requestOptions">Per-request overrides such as headers, query parameters, timeout, retries, and response buffering.</param>
         /// <param name="cancellationToken">The token to cancel the operation with</param>
@@ -55,12 +61,16 @@ namespace TypeSafeAI.Generated
         public async global::System.Threading.Tasks.Task<global::TypeSafeAI.Generated.SystemOneResponse> SystemoneV1SystemonePostAsync(
 
             global::TypeSafeAI.Generated.SystemOneRequest request,
+            global::TypeSafeAI.Generated.SystemoneV1SystemonePostTypeSafeDangerZoneImages? typeSafeDangerZoneImages = default,
+            global::TypeSafeAI.Generated.SystemoneV1SystemonePostTypeSafeDangerZoneLongContext? typeSafeDangerZoneLongContext = default,
             global::TypeSafeAI.Generated.AutoSDKRequestOptions? requestOptions = default,
             global::System.Threading.CancellationToken cancellationToken = default)
         {
             var __response = await SystemoneV1SystemonePostAsResponseAsync(
 
                 request: request,
+                typeSafeDangerZoneImages: typeSafeDangerZoneImages,
+                typeSafeDangerZoneLongContext: typeSafeDangerZoneLongContext,
                 requestOptions: requestOptions,
                 cancellationToken: cancellationToken
             ).ConfigureAwait(false);
@@ -74,6 +84,8 @@ namespace TypeSafeAI.Generated
         /// questions, so you can match each result to its question. The response also includes<br/>
         /// the model used and token usage.
         /// </summary>
+        /// <param name="typeSafeDangerZoneImages"></param>
+        /// <param name="typeSafeDangerZoneLongContext"></param>
         /// <param name="request"></param>
         /// <param name="requestOptions">Per-request overrides such as headers, query parameters, timeout, retries, and response buffering.</param>
         /// <param name="cancellationToken">The token to cancel the operation with</param>
@@ -81,6 +93,8 @@ namespace TypeSafeAI.Generated
         public async global::System.Threading.Tasks.Task<global::TypeSafeAI.Generated.AutoSDKHttpResponse<global::TypeSafeAI.Generated.SystemOneResponse>> SystemoneV1SystemonePostAsResponseAsync(
 
             global::TypeSafeAI.Generated.SystemOneRequest request,
+            global::TypeSafeAI.Generated.SystemoneV1SystemonePostTypeSafeDangerZoneImages? typeSafeDangerZoneImages = default,
+            global::TypeSafeAI.Generated.SystemoneV1SystemonePostTypeSafeDangerZoneLongContext? typeSafeDangerZoneLongContext = default,
             global::TypeSafeAI.Generated.AutoSDKRequestOptions? requestOptions = default,
             global::System.Threading.CancellationToken cancellationToken = default)
         {
@@ -90,6 +104,8 @@ namespace TypeSafeAI.Generated
                 client: HttpClient);
             PrepareSystemoneV1SystemonePostArguments(
                 httpClient: HttpClient,
+                typeSafeDangerZoneImages: ref typeSafeDangerZoneImages,
+                typeSafeDangerZoneLongContext: ref typeSafeDangerZoneLongContext,
                 request: request);
 
 
@@ -147,6 +163,16 @@ namespace TypeSafeAI.Generated
                     __httpRequest.Headers.Add(__authorization.Name, __authorization.Value);
                 }
             }
+
+            if (typeSafeDangerZoneImages != default)
+            {
+                __httpRequest.Headers.TryAddWithoutValidation("TypeSafe-Danger-Zone-Images", typeSafeDangerZoneImages?.ToValueString() ?? string.Empty);
+            }
+            if (typeSafeDangerZoneLongContext != default)
+            {
+                __httpRequest.Headers.TryAddWithoutValidation("TypeSafe-Danger-Zone-Long-Context", typeSafeDangerZoneLongContext?.ToValueString() ?? string.Empty);
+            }
+
                             var __httpRequestContentBody = request.ToJson(JsonSerializerContext);
                             var __httpRequestContent = new global::System.Net.Http.StringContent(
                                 content: __httpRequestContentBody,
@@ -164,6 +190,8 @@ namespace TypeSafeAI.Generated
                 PrepareSystemoneV1SystemonePostRequest(
                     httpClient: HttpClient,
                     httpRequestMessage: __httpRequest,
+                    typeSafeDangerZoneImages: typeSafeDangerZoneImages,
+                    typeSafeDangerZoneLongContext: typeSafeDangerZoneLongContext,
                     request: request);
 
                 return __httpRequest;
@@ -483,6 +511,8 @@ namespace TypeSafeAI.Generated
         /// questions, so you can match each result to its question. The response also includes<br/>
         /// the model used and token usage.
         /// </summary>
+        /// <param name="typeSafeDangerZoneImages"></param>
+        /// <param name="typeSafeDangerZoneLongContext"></param>
         /// <param name="model">
         /// Name or alias of the model to use. Available names are returned by GET /v1/models.
         /// </param>
@@ -492,6 +522,9 @@ namespace TypeSafeAI.Generated
         /// <param name="questions">
         /// Questions to ask about the content, each with a name you choose. The response uses those names to identify the answers.
         /// </param>
+        /// <param name="assets">
+        /// Media assets keyed by an opaque placeholder (recommend a per-image UUID). Each placeholder, wherever it appears as or inside a string in state, question instructions, or criteria, is replaced with the asset. Image assets require a vision-language model.
+        /// </param>
         /// <param name="requestOptions">Per-request overrides such as headers, query parameters, timeout, retries, and response buffering.</param>
         /// <param name="cancellationToken">The token to cancel the operation with</param>
         /// <exception cref="global::System.InvalidOperationException"></exception>
@@ -499,6 +532,9 @@ namespace TypeSafeAI.Generated
             string model,
             global::TypeSafeAI.Generated.AnyOf<string, object, global::System.Collections.Generic.IList<object>> state,
             global::System.Collections.Generic.Dictionary<string, global::TypeSafeAI.Generated.Question> questions,
+            global::TypeSafeAI.Generated.SystemoneV1SystemonePostTypeSafeDangerZoneImages? typeSafeDangerZoneImages = default,
+            global::TypeSafeAI.Generated.SystemoneV1SystemonePostTypeSafeDangerZoneLongContext? typeSafeDangerZoneLongContext = default,
+            global::System.Collections.Generic.Dictionary<string, global::TypeSafeAI.Generated.Asset>? assets = default,
             global::TypeSafeAI.Generated.AutoSDKRequestOptions? requestOptions = default,
             global::System.Threading.CancellationToken cancellationToken = default)
         {
@@ -507,9 +543,12 @@ namespace TypeSafeAI.Generated
                 Model = model,
                 State = state,
                 Questions = questions,
+                Assets = assets,
             };
 
             return await SystemoneV1SystemonePostAsync(
+                typeSafeDangerZoneImages: typeSafeDangerZoneImages,
+                typeSafeDangerZoneLongContext: typeSafeDangerZoneLongContext,
                 request: __request,
                 requestOptions: requestOptions,
                 cancellationToken: cancellationToken).ConfigureAwait(false);

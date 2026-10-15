@@ -15,13 +15,27 @@ namespace TypeSafeAI.Generated
 
             typeof(global::TypeSafeAI.Generated.JsonConverters.AnswerDiscriminatorTypeNullableJsonConverter),
 
+            typeof(global::TypeSafeAI.Generated.JsonConverters.AssetFormatJsonConverter),
+
+            typeof(global::TypeSafeAI.Generated.JsonConverters.AssetFormatNullableJsonConverter),
+
             typeof(global::TypeSafeAI.Generated.JsonConverters.QuestionDiscriminatorTypeJsonConverter),
 
             typeof(global::TypeSafeAI.Generated.JsonConverters.QuestionDiscriminatorTypeNullableJsonConverter),
 
+            typeof(global::TypeSafeAI.Generated.JsonConverters.SystemoneV1SystemonePostTypeSafeDangerZoneImagesJsonConverter),
+
+            typeof(global::TypeSafeAI.Generated.JsonConverters.SystemoneV1SystemonePostTypeSafeDangerZoneImagesNullableJsonConverter),
+
+            typeof(global::TypeSafeAI.Generated.JsonConverters.SystemoneV1SystemonePostTypeSafeDangerZoneLongContextJsonConverter),
+
+            typeof(global::TypeSafeAI.Generated.JsonConverters.SystemoneV1SystemonePostTypeSafeDangerZoneLongContextNullableJsonConverter),
+
             typeof(global::TypeSafeAI.Generated.JsonConverters.AnswerJsonConverter),
 
             typeof(global::TypeSafeAI.Generated.JsonConverters.QuestionJsonConverter),
+
+            typeof(global::TypeSafeAI.Generated.JsonConverters.AnyOfJsonConverter<string, object, global::System.Collections.Generic.IList<object>>),
 
             typeof(global::TypeSafeAI.Generated.JsonConverters.AnyOfJsonConverter<string, object, global::System.Collections.Generic.IList<object>>),
 
@@ -52,15 +66,20 @@ namespace TypeSafeAI.Generated
     [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::TypeSafeAI.Generated.NoulAnswer))]
     [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::TypeSafeAI.Generated.ChoiceAnswer))]
     [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::TypeSafeAI.Generated.ScoreAnswer))]
+    [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::TypeSafeAI.Generated.BoxAnswer))]
     [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::TypeSafeAI.Generated.AnswerDiscriminator))]
     [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::TypeSafeAI.Generated.AnswerDiscriminatorType), TypeInfoPropertyName = "AnswerDiscriminatorType2")]
+    [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::TypeSafeAI.Generated.Asset))]
     [global::System.Text.Json.Serialization.JsonSerializable(typeof(string))]
+    [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::TypeSafeAI.Generated.AssetFormat), TypeInfoPropertyName = "AssetFormat2")]
+    [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::TypeSafeAI.Generated.BoxCoordinates))]
     [global::System.Text.Json.Serialization.JsonSerializable(typeof(double))]
+    [global::System.Text.Json.Serialization.JsonSerializable(typeof(object))]
+    [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::TypeSafeAI.Generated.BoxQuestion))]
+    [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::TypeSafeAI.Generated.AnyOf<string, object, global::System.Collections.Generic.IList<object>>), TypeInfoPropertyName = "AnyOfStringObjectIListObject2")]
+    [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::System.Collections.Generic.IList<object>))]
     [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::System.Collections.Generic.Dictionary<string, double>))]
     [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::TypeSafeAI.Generated.ChoiceQuestion))]
-    [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::TypeSafeAI.Generated.AnyOf<string, object, global::System.Collections.Generic.IList<object>>), TypeInfoPropertyName = "AnyOfStringObjectIListObject2")]
-    [global::System.Text.Json.Serialization.JsonSerializable(typeof(object))]
-    [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::System.Collections.Generic.IList<object>))]
     [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::TypeSafeAI.Generated.HTTPValidationError))]
     [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::System.Collections.Generic.IList<global::TypeSafeAI.Generated.ValidationError>))]
     [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::TypeSafeAI.Generated.ValidationError))]
@@ -76,12 +95,17 @@ namespace TypeSafeAI.Generated
     [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::System.Collections.Generic.IList<global::TypeSafeAI.Generated.AnyOf<string, object, global::System.Collections.Generic.IList<object>>>))]
     [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::TypeSafeAI.Generated.SystemOneRequest))]
     [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::System.Collections.Generic.Dictionary<string, global::TypeSafeAI.Generated.Question>))]
+    [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::System.Collections.Generic.Dictionary<string, global::TypeSafeAI.Generated.Asset>))]
     [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::TypeSafeAI.Generated.SystemOneResponse))]
     [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::System.Collections.Generic.Dictionary<string, global::TypeSafeAI.Generated.Answer>))]
     [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::TypeSafeAI.Generated.Usage))]
     [global::System.Text.Json.Serialization.JsonSerializable(typeof(int))]
     [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::System.Collections.Generic.IList<global::TypeSafeAI.Generated.AnyOf<string, int?>>))]
     [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::TypeSafeAI.Generated.AnyOf<string, int?>), TypeInfoPropertyName = "AnyOfStringInt322")]
+    [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::TypeSafeAI.Generated.SystemoneV1SystemonePostRequest))]
+    [global::System.Text.Json.Serialization.JsonSerializable(typeof(byte[]))]
+    [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::TypeSafeAI.Generated.SystemoneV1SystemonePostTypeSafeDangerZoneImages), TypeInfoPropertyName = "SystemoneV1SystemonePostTypeSafeDangerZoneImages2")]
+    [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::TypeSafeAI.Generated.SystemoneV1SystemonePostTypeSafeDangerZoneLongContext), TypeInfoPropertyName = "SystemoneV1SystemonePostTypeSafeDangerZoneLongContext2")]
     [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::TypeSafeAI.Generated.AnyOf<string, object, global::System.Collections.Generic.List<object>>))]
     [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::System.Collections.Generic.List<global::TypeSafeAI.Generated.ValidationError>))]
     [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::System.Collections.Generic.List<global::TypeSafeAI.Generated.ModelMetadata>))]

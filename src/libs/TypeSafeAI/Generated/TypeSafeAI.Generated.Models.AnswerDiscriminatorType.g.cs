@@ -11,6 +11,10 @@ namespace TypeSafeAI.Generated
         /// <summary>
         ///
         /// </summary>
+        Box,
+        /// <summary>
+        ///
+        /// </summary>
         Choice,
         /// <summary>
         ///
@@ -34,6 +38,7 @@ namespace TypeSafeAI.Generated
         {
             return value switch
             {
+                AnswerDiscriminatorType.Box => "box",
                 AnswerDiscriminatorType.Choice => "choice",
                 AnswerDiscriminatorType.Noul => "noul",
                 AnswerDiscriminatorType.Score => "score",
@@ -47,6 +52,7 @@ namespace TypeSafeAI.Generated
         {
             return value switch
             {
+                "box" => AnswerDiscriminatorType.Box,
                 "choice" => AnswerDiscriminatorType.Choice,
                 "noul" => AnswerDiscriminatorType.Noul,
                 "score" => AnswerDiscriminatorType.Score,
