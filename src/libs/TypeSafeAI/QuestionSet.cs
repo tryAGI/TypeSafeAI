@@ -43,6 +43,12 @@ public sealed class QuestionSet : IReadOnlyDictionary<string, Question>
         return new(name);
     }
 
+    public QuestionHandle<BoxAnswer> AddBox(string name, BoxQuestion question)
+    {
+        Add(name, question);
+        return new(name);
+    }
+
     public QuestionSet Add(string name, Question question)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(name);

@@ -125,7 +125,10 @@ public sealed class TypeSafeClient : ITypeSafeClient, IDisposable, IAsyncDisposa
             var request = CreateRequest(state, questions, model ?? _options.DefaultModel, requestOptions);
             var rawResponse = await SendWithRetryAsync(
                 (options, ct) => _raw.SystemoneV1SystemonePostAsResponseAsync(
-                    request, requestOptions: options, cancellationToken: ct),
+                    request,
+                    typeSafeDangerZoneImages: request.Assets?.Count > 0 || questions.Values.Any(static q => q is BoxQuestion) || requestOptions?.EnableImages == true
+                        ? SystemoneV1SystemonePostTypeSafeDangerZoneImages.True : null,
+                    requestOptions: options, cancellationToken: ct),
                 requestOptions, cancellationToken).ConfigureAwait(false);
             var response = Decode(rawResponse, _retryTracker.RetryCount);
             activity?.SetTag("gen_ai.response.model", response.Model);
@@ -212,7 +215,7 @@ public sealed class TypeSafeClient : ITypeSafeClient, IDisposable, IAsyncDisposa
                 if (!optional) throw new TypeSafeResponseValidationException("A required answer is missing.", property.Name);
                 continue;
             }
-            var expected = property.PropertyType == typeof(NoulAnswer) ? "noul" : property.PropertyType == typeof(ChoiceAnswer) ? "choice" : property.PropertyType == typeof(ScoreAnswer) ? "score" : null;
+            var expected = property.PropertyType == typeof(NoulAnswer) ? "noul" : property.PropertyType == typeof(ChoiceAnswer) ? "choice" : property.PropertyType == typeof(ScoreAnswer) ? "score" : property.PropertyType == typeof(BoxAnswer) ? "box" : null;
             if (expected is not null && (!value.TryGetProperty("type", out var discriminator) || discriminator.GetString() != expected))
                 throw new TypeSafeResponseValidationException($"Expected a {expected} answer.", property.Name);
         }
@@ -291,11 +294,30 @@ public sealed class TypeSafeClient : ITypeSafeClient, IDisposable, IAsyncDisposa
                     (JsonTypeInfo<Generated.Question>)_raw.JsonSerializerContext.GetTypeInfo(typeof(Generated.Question))!),
                 StringComparer.Ordinal),
             assets: null);
+        if (options?.Images.Count > 0)
+        {
+            var images = options.Images.ToArray();
+            var referenceBytes = 0;
+            request.Assets = new Dictionary<string, Generated.Asset>(StringComparer.Ordinal);
+            foreach (var (reference, image) in images)
+            {
+                ArgumentException.ThrowIfNullOrWhiteSpace(reference);
+                ArgumentNullException.ThrowIfNull(image);
+                var length = System.Text.Encoding.UTF8.GetByteCount(reference);
+                if (length > 1024 || (referenceBytes += length) > 65536)
+                    throw new ArgumentException("Image references exceed the API's UTF-8 byte limits.", nameof(options));
+                request.Assets.Add(reference, options.UseBase64Images
+                    ? new Generated.Asset { Type = "image", Format = image.Format == "png" ? AssetFormat.Png : AssetFormat.Jpg, DataBase64 = Convert.ToBase64String(image.Bytes) }
+                    : new Generated.Asset { Type = "image", Part = "image-" + request.Assets.Count });
+            }
+            if (!options.UseBase64Images)
+                request.MultipartImages = images.Select((pair, index) => ("image-" + index, pair.Value)).ToArray();
+        }
         if (options is not null)
         {
             foreach (var pair in options.ExtraBody)
             {
-                if (pair.Key is "state" or "model" or "questions")
+                if (pair.Key is "state" or "model" or "questions" || pair.Key == "assets" && options.Images.Count > 0)
                 {
                     throw new ArgumentException($"ExtraBody cannot override required field '{pair.Key}'.", nameof(options));
                 }
@@ -474,6 +496,7 @@ public sealed class TypeSafeClient : ITypeSafeClient, IDisposable, IAsyncDisposa
                 element.GetProperty("choice").GetString() ?? throw new TypeSafeResponseValidationException("Choice is null.", path + ".choice"),
                 element.GetProperty("confidence").GetDouble(),
                 ReadDoubleDictionary(element.GetProperty("probabilities"))) { RawJson = element.Clone() },
+            "box" => DecodeBox(element, path),
             "score" => new ScoreAnswer(
                 element.GetProperty("score").GetDouble(),
                 element.GetProperty("confidence").GetDouble(),
@@ -481,6 +504,19 @@ public sealed class TypeSafeClient : ITypeSafeClient, IDisposable, IAsyncDisposa
                 ReadDoubleDictionary(element.GetProperty("probabilities"))) { RawJson = element.Clone() },
             _ => new RawAnswer(type ?? "unknown", element.Clone()) { RawJson = element.Clone() },
         };
+    }
+
+    private static BoxAnswer DecodeBox(JsonElement element, string path)
+    {
+        var box = element.GetProperty("box");
+        var coordinates = new BoxCoordinates(box.GetProperty("top").GetDouble(), box.GetProperty("bottom").GetDouble(),
+            box.GetProperty("left").GetDouble(), box.GetProperty("right").GetDouble());
+        var confidence = element.GetProperty("confidence").GetDouble();
+        static bool Unit(double value) => double.IsFinite(value) && value >= 0 && value <= 1;
+        if (!Unit(coordinates.Top) || !Unit(coordinates.Bottom) || !Unit(coordinates.Left) || !Unit(coordinates.Right) ||
+            coordinates.Top >= coordinates.Bottom || coordinates.Left >= coordinates.Right || !Unit(confidence))
+            throw new TypeSafeResponseValidationException("Invalid box coordinates or confidence.", path);
+        return new BoxAnswer(coordinates, confidence) { RawJson = element.Clone() };
     }
 
     private static IReadOnlyDictionary<string, double> ReadDoubleDictionary(JsonElement element) =>

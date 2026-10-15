@@ -45,6 +45,12 @@ public sealed record ScoreAnswer(
         : int.Parse(Probabilities.MaxBy(static pair => pair.Value).Key, System.Globalization.CultureInfo.InvariantCulture);
 }
 
+/// <summary>Edges measured from the top-left, as fractions of the image width and height.</summary>
+public sealed record BoxCoordinates(double Top, double Bottom, double Left, double Right);
+
+/// <summary>One bounding box and its confidence. A box is returned even when the target is absent.</summary>
+public sealed record BoxAnswer(BoxCoordinates Box, double Confidence) : Answer("box");
+
 /// <summary>An answer type added by the service after this SDK was published.</summary>
 public sealed record RawAnswer(string Discriminator, JsonElement Value) : Answer(Discriminator);
 
@@ -58,6 +64,7 @@ public sealed class AnswerCollection : ReadOnlyDictionary<string, Answer>
 
     public IReadOnlyDictionary<string, NoulAnswer> Nouls => OfType<NoulAnswer>();
     public IReadOnlyDictionary<string, ChoiceAnswer> Choices => OfType<ChoiceAnswer>();
+    public IReadOnlyDictionary<string, BoxAnswer> Boxes => OfType<BoxAnswer>();
     public IReadOnlyDictionary<string, ScoreAnswer> Scores => OfType<ScoreAnswer>();
 
     public TAnswer Get<TAnswer>(string name) where TAnswer : Answer =>

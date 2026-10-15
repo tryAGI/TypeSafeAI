@@ -134,6 +134,18 @@ public sealed record ScoreQuestion : Question
     }
 }
 
+/// <summary>Finds one target in an image. Requires a Jev 1.14-compatible model.</summary>
+public sealed record BoxQuestion(JsonContent Instructions) : Question
+{
+    internal override void Write(Utf8JsonWriter writer)
+    {
+        writer.WriteStartObject();
+        writer.WriteString("type", "box");
+        WriteContent(writer, "instructions", Instructions);
+        writer.WriteEndObject();
+    }
+}
+
 /// <summary>A forward-compatible question whose JSON shape is not yet modeled by this SDK.</summary>
 public sealed record RawQuestion(JsonElement Value) : Question
 {

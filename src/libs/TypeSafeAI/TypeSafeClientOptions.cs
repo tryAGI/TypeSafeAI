@@ -43,5 +43,11 @@ public sealed class RequestOptions
     public IDictionary<string, string> Headers { get; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
     public IDictionary<string, string> QueryParameters { get; } = new Dictionary<string, string>(StringComparer.Ordinal);
     public IDictionary<string, JsonElement> ExtraBody { get; } = new Dictionary<string, JsonElement>(StringComparer.Ordinal);
+    /// <summary>Images keyed by their references in state, instructions, or criteria.</summary>
+    public IDictionary<string, ImageAsset> Images { get; } = new Dictionary<string, ImageAsset>(StringComparer.Ordinal);
+    /// <summary>Send images as base64 JSON instead of the default multipart upload.</summary>
+    public bool UseBase64Images { get; set; }
+    /// <summary>Enable the experimental images header even when no image assets are supplied.</summary>
+    public bool EnableImages { get; set; }
     public string? ApiKey { get; set; }
 }

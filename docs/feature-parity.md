@@ -28,6 +28,12 @@ This SDK deliberately combines a generated raw transport with a first-class hand
 | NativeAOT/source-generated JSON | — | Yes | — | Yes | Yes |
 | Generated OpenAPI transport | official wire models | — | — | — | Yes |
 
+## Images and Box (2026-10-15)
+
+Support follows the current [Images](https://docs.typesafe.ai/images) and [Box](https://docs.typesafe.ai/primitives/box) contracts: multipart uploads, base64 JSON, custom or generated UUID references throughout nested state/instructions/criteria, mixed Box/Noul/Choice/Score requests, typed Box handles and grouped answers, replay, confidence, token usage, and custom response projection. See the [guide](guides/images.md).
+
+The generated OpenAPI already models these wire types. Handwritten extensions add the public API and multipart content using a generated request hook, preserving generated authentication, retries, timeout, cancellation, and error handling. Local wire tests use synthetic bytes and mocked HTTP responses; they do not establish live image acceptance or model accuracy.
+
 ## Examples audited
 
 Executable examples cover mixed questions, Noul classification, choice selection, scoring, structured state, model discovery, custom projections, error handling, intent routing, batching, replay, guardrail policies, AI functions, and evaluation. Transport regression tests exercise future union values, enum wire labels, request IDs, configurable retries, and cancellation. Chat middleware behavior requires its own tests; a documentation example is not evidence of exhaustive parity.

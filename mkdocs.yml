@@ -9,6 +9,7 @@ nav:
 - Feature parity: feature-parity.md
 - Guides:
   - Microsoft.Extensions.AI: guides/meai.md
+  - Images and Box: guides/images.md
 # EXAMPLES:START
 - Examples:
   - Generate: examples/generate.md

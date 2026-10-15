@@ -67,6 +67,12 @@ Set `TYPESAFE_API_KEY` and use `TypeSafeClient.CreateFromEnvironment()` when you
 
 See the [feature parity matrix](https://tryagi.github.io/TypeSafeAI/feature-parity/) for the audited upstream surface and [Microsoft.Extensions.AI guide](https://tryagi.github.io/TypeSafeAI/guides/meai/) for guardrails, routing, tools, and evaluation.
 
+## Images and Box
+
+Send PNG/JPEG images with `ImageAsset` and `RequestOptions.Images`. Uploads use multipart by default; `UseBase64Images = true` selects JSON. Image references work in nested state, instructions, and criteria. `BoxQuestion`, `AddBox`, and `BoxAnswer` provide typed bounding boxes. The SDK enables the experimental images header when images or typed Box questions are supplied. Use `jev-preview` or `jev-1.14.0` for Box.
+
+See the [Images and Box guide](https://tryagi.github.io/TypeSafeAI/guides/images/) for upload examples, limits, and presence checks. These features are experimental upstream.
+
 <!-- EXAMPLES:START -->
 ### Generate
 Create a client from `TYPESAFE_API_KEY` and discover the models available to the account.

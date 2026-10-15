@@ -29,7 +29,7 @@ namespace TypeSafeAI
             var copy = reader;
             using var document = JsonDocument.ParseValue(ref copy);
             var raw = document.RootElement.Clone();
-            if (raw.TryGetProperty("type", out var type) && type.GetString() is "noul" or "choice" or "score")
+            if (raw.TryGetProperty("type", out var type) && type.GetString() is "noul" or "choice" or "score" or "box")
             {
                 return base.Read(ref reader, typeToConvert, options) with { RawJson = raw };
             }
@@ -51,7 +51,7 @@ namespace TypeSafeAI
             var copy = reader;
             using var document = JsonDocument.ParseValue(ref copy);
             var raw = document.RootElement.Clone();
-            if (raw.TryGetProperty("type", out var type) && type.GetString() is "noul" or "choice" or "score")
+            if (raw.TryGetProperty("type", out var type) && type.GetString() is "noul" or "choice" or "score" or "box")
             {
                 return base.Read(ref reader, typeToConvert, options) with { RawJson = raw };
             }
