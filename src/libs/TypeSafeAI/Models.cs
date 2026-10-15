@@ -17,6 +17,8 @@ public sealed record SystemOneResponse(
     ResponseMetadata Metadata,
     JsonElement RawJson)
 {
+    /// <summary>Typed Celeris metadata when x_celeris is present, including during replay.</summary>
+    public CelerisDecisionResponse? Celeris { get; init; }
     public TAnswer Get<TAnswer>(string name) where TAnswer : Answer => Answers.Get<TAnswer>(name);
 }
 

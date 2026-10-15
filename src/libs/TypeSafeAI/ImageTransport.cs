@@ -9,6 +9,8 @@ public sealed partial class SystemOneRequest
     internal (string Part, ImageAsset Image)[]? MultipartImages { get; set; }
     [JsonIgnore]
     internal RequestCompression Compression { get; set; }
+    [JsonIgnore]
+    internal int? MaximumRequestBytes { get; set; }
 }
 
 public partial class RawTypeSafeClient
@@ -20,6 +22,8 @@ public partial class RawTypeSafeClient
         SystemoneV1SystemonePostTypeSafeDangerZoneLongContext? typeSafeDangerZoneLongContext,
         SystemOneRequest request)
     {
+        if (request.MaximumRequestBytes is { } maximum && httpRequestMessage.Content!.Headers.ContentLength > maximum)
+            throw new ArgumentException($"The encoded request exceeds the provider's {maximum}-byte body limit.", nameof(request));
         if (request.MultipartImages is { Length: > 0 } images)
         {
             var multipart = new MultipartFormDataContent();

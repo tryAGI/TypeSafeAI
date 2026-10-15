@@ -67,6 +67,18 @@ Set `TYPESAFE_API_KEY` and use `TypeSafeClient.CreateFromEnvironment()` when you
 
 See the [feature parity matrix](https://tryagi.github.io/TypeSafeAI/feature-parity/) for the audited upstream surface and [Microsoft.Extensions.AI guide](https://tryagi.github.io/TypeSafeAI/guides/meai/) for guardrails, routing, tools, and evaluation.
 
+## Celeris Decision
+
+Use `CustomProviders.Celeris("CELERIS_API_KEY")` for the compatible System One endpoint.
+The same typed questions, routing, guardrails, and evaluation APIs are available.
+`RequestOptions.Celeris` provides typed explanation and image-resolution settings;
+`RequestOptions.Images` is automatically translated to Celeris's named data URLs.
+Read explanations from `response.Celeris.Explanations` (or `result.Response.Celeris`).
+
+See the [Providers and Celeris guide](https://tryagi.github.io/TypeSafeAI/guides/providers/)
+for examples, capability differences, and limits. Celeris does not support TypeSafe's
+Box questions, multipart uploads, or experimental opt-in settings.
+
 ## Advanced structure and API coverage
 
 State, instructions, Choice descriptions, Score levels, and Noul definitions support nested JSON. Use `JsonContent`, `ChoiceQuestion.FromCriteria`, and `ScoreQuestion.FromCriteria` for existing structured data. Structured Score legends retain their JSON shapes, including through replay. Content at the documented 64-level nesting limit is supported inside request/response envelopes.
@@ -173,6 +185,21 @@ const string json = """
     """;
 
 var response = TypeSafeClient.FromHttpResponse(json);
+```
+
+### Celeris explanations and replay
+Read typed Celeris explanations from a saved System One response without making a network request.
+
+```csharp
+// Celeris explanations are keyed by question name. The same typed metadata is available on live responses and QuestionSetResult.Response.
+const string json = """
+    {"model":"celeris-1-decision","answers":{"refund":{"type":"noul","noul":0.95}},
+     "usage":{"input_tokens":122,"output_tokens":15},
+     "x_celeris":{"explanations":{"refund":"The customer explicitly requests a refund."}}}
+    """;
+var response = TypeSafeClient.FromHttpResponse(json);
+Console.WriteLine(response.Get<NoulAnswer>("refund").Noul);
+Console.WriteLine(response.Celeris!.Explanations["refund"]);
 ```
 
 ### Typed intent routing

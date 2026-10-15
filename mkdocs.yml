@@ -9,6 +9,7 @@ nav:
 - Feature parity: feature-parity.md
 - Documentation coverage: reference-coverage.md
 - Guides:
+  - Providers and Celeris: guides/providers.md
   - Microsoft.Extensions.AI: guides/meai.md
   - Images and Box: guides/images.md
   - Advanced structure: guides/structure.md
@@ -22,6 +23,7 @@ nav:
   - List models: examples/list-models.md
   - Bounded batch: examples/bounded-batch.md
   - Replay and forward compatibility: examples/replay.md
+  - Celeris explanations and replay: examples/celeris-replay.md
   - Typed intent routing: examples/intent-routing.md
   - AI functions and evaluation: examples/meai-functions-evaluation.md
   - Guardrail policy: examples/guardrail-policy.md

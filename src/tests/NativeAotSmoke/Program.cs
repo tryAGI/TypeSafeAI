@@ -1,6 +1,7 @@
 using System.Net;
 using System.IO.Compression;
 using System.Text;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.AI;
 using TypeSafeAI;
@@ -33,7 +34,19 @@ if (projected.Ok?.Noul != 0.9 || projected.Absent is not null || projected.Box?.
 var function = TypeSafeAIFunctions.Create(client, questions, "judge", "Judge synthetic state.");
 if (await function.InvokeAsync(new AIFunctionArguments { ["state"] = "synthetic" }) is null)
     throw new InvalidOperationException("AI function returned no result.");
-Console.WriteLine("NativeAOT transport, enum labels, typed projection, deep structure, compression, images, boxes, nullable usage, future answers, and AI function passed.");
+using var celerisHttp = new HttpClient(new CelerisFixtureHandler());
+using var celeris = CustomProviders.Celeris("fixture-not-a-secret", celerisHttp);
+var celerisOptions = new RequestOptions
+{
+    Celeris = new CelerisDecisionOptions { Explain = true, ImageResolution = CelerisImageResolution.Tokens560 },
+};
+celerisOptions.Images.Add("receipt", image);
+var celerisResponse = await celeris.SystemOneAsync(JsonContent.Parse("""{"image":"receipt"}"""),
+    new Dictionary<string, Question> { ["ok"] = new NoulQuestion("The receipt is visible.") }, requestOptions: celerisOptions);
+if (celerisResponse.Celeris?.Explanations["ok"] != "The receipt is visible." ||
+    TypeSafeClient.FromHttpResponse(celerisResponse.RawJson.GetRawText()).Celeris?.Explanations["ok"] != "The receipt is visible.")
+    throw new InvalidOperationException("Celeris typed explanations or replay did not survive NativeAOT.");
+Console.WriteLine("NativeAOT transport, enum labels, projection, structure, compression, images, boxes, usage, future answers, AI function, and Celeris images/resolution/explanations/replay passed.");
 
 enum Intent
 {
@@ -70,6 +83,26 @@ sealed class FixtureHandler : HttpMessageHandler
         return new HttpResponseMessage(HttpStatusCode.OK)
         {
             Content = new StringContent("""{"model":"fixture","answers":{"intent":{"type":"choice","choice":"play_music","confidence":1,"probabilities":{"play_music":1,"Ignore":0}},"ok":{"type":"noul","noul":0.9},"box":{"type":"box","box":{"top":0.2,"bottom":0.9,"left":0.1,"right":0.8},"confidence":0.95},"structure":{"type":"score","score":0,"confidence":1,"legend":{"0":{"signals":[true,null,1]},"1":["other"]},"probabilities":{"0":1,"1":0}},"future":{"type":"future","value":42}},"usage":{"input_tokens":1,"output_tokens":null}}"""),
+        };
+    }
+}
+
+sealed class CelerisFixtureHandler : HttpMessageHandler
+{
+    protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+    {
+        if (request.RequestUri != new Uri("https://inference.celeris.ai/celeris-1-decision/v1/systemone") ||
+            request.Headers.Contains("TypeSafe-Danger-Zone-Images") || request.Content!.Headers.ContentType!.MediaType != "application/json")
+            throw new InvalidOperationException("The Celeris transport profile was lost.");
+        using var body = JsonDocument.Parse(await request.Content.ReadAsStringAsync(cancellationToken));
+        var extension = body.RootElement.GetProperty("x_celeris");
+        if (!extension.GetProperty("explain").GetBoolean() || extension.GetProperty("max_soft_tokens").GetInt32() != 560 ||
+            extension.GetProperty("images").GetProperty("receipt").GetString() != "data:image/png;base64,iVBORw==" ||
+            body.RootElement.TryGetProperty("assets", out _))
+            throw new InvalidOperationException("Celeris images or typed options did not survive NativeAOT.");
+        return new HttpResponseMessage(HttpStatusCode.OK)
+        {
+            Content = new StringContent("""{"model":"celeris-1-decision","answers":{"ok":{"type":"noul","noul":0.95}},"usage":{"input_tokens":122,"output_tokens":15},"x_celeris":{"explanations":{"ok":"The receipt is visible."}}}"""),
         };
     }
 }

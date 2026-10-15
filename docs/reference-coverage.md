@@ -28,6 +28,13 @@ Tests are local HTTP contract fixtures. They establish serialization, parsing, a
 
 ## Runtime differences
 
+Celeris's compatible System One endpoint is supported by an explicit provider
+profile, separate from this TypeSafe documentation audit. Typed Celeris options,
+explanations, image translation, and provider-specific validation are covered by
+`Tests.Celeris.cs` and the native smoke program. See the
+[provider guide](guides/providers.md); compatibility is scoped to the documented
+System One surface and is not proof of live provider acceptance.
+
 - .NET uses documented gzip compression on request; it does not bundle Node/Python's native zstd runtime. Compression defaults to none and can be overridden per call.
 - Image uploads use an explicit reference-to-asset map. Python inline objects and JavaScript tagged templates have the same wire capability through ImageAsset.Reference and RequestOptions.Images; their language syntax is not reproduced.
 - Synchronous and asynchronous .NET APIs use tasks, CancellationToken, IDisposable, HttpClient and DI rather than Python event loops or JavaScript promises/fetch/browser guards.

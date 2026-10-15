@@ -19,8 +19,8 @@
     <p>The raw client is regenerated from the <a href="https://api.typesafe.ai/openapi.json">official OpenAPI definition</a>; typed questions, batching, routing, DI, and MEAI integrations are maintained as handwritten extensions.</p>
   </div>
   <div class="docs-feature-card">
-    <h3>Complete ecosystem parity</h3>
-    <p>Includes the official JavaScript/Python examples plus the strongest .NET features from TypeSafeAI.Net, typesafe-sdk-dotnet, and Jev.Net.</p>
+    <h3>Audited provider capabilities</h3>
+    <p>Supports the documented System One API, structured questions, images, and Box, with a published coverage audit and explicit runtime differences.</p>
   </div>
   <div class="docs-feature-card">
     <h3>Modern .NET</h3>
@@ -66,6 +66,30 @@ Console.WriteLine(result.Get(urgency).Score);
 Set `TYPESAFE_API_KEY` and use `TypeSafeClient.CreateFromEnvironment()` when you prefer environment configuration. The generated `TypeSafeAI.Generated.RawTypeSafeClient` remains public for direct OpenAPI-level access.
 
 See the [feature parity matrix](https://tryagi.github.io/TypeSafeAI/feature-parity/) for the audited upstream surface and [Microsoft.Extensions.AI guide](https://tryagi.github.io/TypeSafeAI/guides/meai/) for guardrails, routing, tools, and evaluation.
+
+## Celeris Decision
+
+Use `CustomProviders.Celeris("CELERIS_API_KEY")` for the compatible System One endpoint.
+The same typed questions, routing, guardrails, and evaluation APIs are available.
+`RequestOptions.Celeris` provides typed explanation and image-resolution settings;
+`RequestOptions.Images` is automatically translated to Celeris's named data URLs.
+Read explanations from `response.Celeris.Explanations` (or `result.Response.Celeris`).
+
+See the [Providers and Celeris guide](https://tryagi.github.io/TypeSafeAI/guides/providers/)
+for examples, capability differences, and limits. Celeris does not support TypeSafe's
+Box questions, multipart uploads, or experimental opt-in settings.
+
+## Advanced structure and API coverage
+
+State, instructions, Choice descriptions, Score levels, and Noul definitions support nested JSON. Use `JsonContent`, `ChoiceQuestion.FromCriteria`, and `ScoreQuestion.FromCriteria` for existing structured data. Structured Score legends retain their JSON shapes, including through replay. Content at the documented 64-level nesting limit is supported inside request/response envelopes.
+
+See the [Advanced structure guide](https://tryagi.github.io/TypeSafeAI/guides/structure/), [request options](https://tryagi.github.io/TypeSafeAI/guides/request-options/) (gzip compression and long context), and [full documentation coverage audit](https://tryagi.github.io/TypeSafeAI/reference-coverage/). Token counts are nullable when the provider does not report usage.
+
+## Images and Box
+
+Send PNG/JPEG images with `ImageAsset` and `RequestOptions.Images`. Uploads use multipart by default; `UseBase64Images = true` selects JSON. Image references work in nested state, instructions, and criteria. `BoxQuestion`, `AddBox`, and `BoxAnswer` provide typed bounding boxes. The SDK enables the experimental images header when images or typed Box questions are supplied. Use `jev-preview` or `jev-1.14.0` for Box.
+
+See the [Images and Box guide](https://tryagi.github.io/TypeSafeAI/guides/images/) for upload examples, limits, and presence checks. These features are experimental upstream.
 
 <!-- EXAMPLES:START -->
 ### Generate
@@ -161,6 +185,21 @@ const string json = """
     """;
 
 var response = TypeSafeClient.FromHttpResponse(json);
+```
+
+### Celeris explanations and replay
+Read typed Celeris explanations from a saved System One response without making a network request.
+
+```csharp
+// Celeris explanations are keyed by question name. The same typed metadata is available on live responses and QuestionSetResult.Response.
+const string json = """
+    {"model":"celeris-1-decision","answers":{"refund":{"type":"noul","noul":0.95}},
+     "usage":{"input_tokens":122,"output_tokens":15},
+     "x_celeris":{"explanations":{"refund":"The customer explicitly requests a refund."}}}
+    """;
+var response = TypeSafeClient.FromHttpResponse(json);
+Console.WriteLine(response.Get<NoulAnswer>("refund").Noul);
+Console.WriteLine(response.Celeris!.Explanations["refund"]);
 ```
 
 ### Typed intent routing

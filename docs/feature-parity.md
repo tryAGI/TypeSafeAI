@@ -44,6 +44,13 @@ The generated OpenAPI already models these wire types. Handwritten extensions ad
 
 ## Examples audited
 
+Celeris Decision is also available through `CustomProviders.Celeris`. The provider
+profile translates named images to data URLs, exposes typed explanations and
+resolution options, and validates the documented request bounds. TypeSafe-only
+Box, multipart, compression, and experimental opt-in behavior is not advertised
+for Celeris. See the [provider capability matrix](guides/providers.md) for exact
+differences and verification boundaries.
+
 Executable examples cover mixed questions, Noul classification, choice selection, scoring, structured state, model discovery, custom projections, error handling, intent routing, batching, replay, guardrail policies, AI functions, and evaluation. Transport regression tests exercise future union values, enum wire labels, request IDs, configurable retries, and cancellation. Chat middleware behavior requires its own tests; a documentation example is not evidence of exhaustive parity.
 
 ## Packaging and generation
@@ -59,6 +66,13 @@ The matrix describes capabilities, not identical public APIs or proof that every
 Retry policy additionally supports configurable HTTP statuses, connection/timeout switches, custom predicates, a total budget, and an injectable delay clock. The SDK does not claim automatic retries are free: ambiguous transport failures may already have incurred server work. Use `RetryPolicy.None` for latency-sensitive or non-replayable calls.
 
 ## Verification
+
+The Celeris provider addition passed the full local suite: 87 tests passed and
+9 credential-dependent/opt-in tests skipped. Its contract fixtures exercise the
+System One route, PNG/JPEG data URLs, resolution values, explanations and replay,
+request bounds, unsupported capabilities, retries, DI/AI-function composition,
+and isolated per-call credentials. These are local transport/serialization checks;
+Celeris live model acceptance remains unverified.
 
 On 2026-10-15, the full local suite passed 46 tests and skipped 9 credential-dependent/opt-in tests. The macOS arm64 NativeAOT executable passed generated transport, enum labels, typed projection, 64-level instructions, structured Score legends, gzip multipart serialization, images, Box, nullable usage, future answers, and the AI-function adapter without network access. The nesting boundary regression was observed failing before the envelope-depth fix and passing afterward.
 

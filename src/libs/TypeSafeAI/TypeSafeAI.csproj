@@ -8,8 +8,8 @@
   <PropertyGroup Label="Nuget">
     <PackageId>tryAGI.TypeSafeAI</PackageId>
     <Title>TypeSafeAI SDK for .NET</Title>
-    <Description>First-class, NativeAOT-compatible .NET SDK for TypeSafe AI System One, generated from the official OpenAPI specification and extended with typed questions, structured content, routing, batching, dependency injection, retries, telemetry, and Microsoft.Extensions.AI integrations.</Description>
-    <PackageTags>typesafe-ai;system-one;jev;classification;structured-output;ai;sdk;openapi;nativeaot</PackageTags>
+    <Description>First-class, NativeAOT-compatible .NET SDK for TypeSafe AI System One and compatible Celeris Decision calls, generated from the official OpenAPI specification and extended with typed questions, explanations, images, structured content, routing, batching, dependency injection, retries, telemetry, and Microsoft.Extensions.AI integrations.</Description>
+    <PackageTags>typesafe-ai;system-one;jev;celeris;decision;classification;structured-output;ai;sdk;openapi;nativeaot</PackageTags>
     <PackageProjectUrl>https://github.com/tryAGI/TypeSafeAI</PackageProjectUrl>
     <RepositoryUrl>https://github.com/tryAGI/TypeSafeAI</RepositoryUrl>
   </PropertyGroup>

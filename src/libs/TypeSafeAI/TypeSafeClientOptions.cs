@@ -6,6 +6,8 @@ namespace TypeSafeAI;
 /// <summary>Configuration for <see cref="TypeSafeClient"/>.</summary>
 public sealed class TypeSafeClientOptions
 {
+    /// <summary>Controls provider-specific request encoding and capability validation.</summary>
+    public SystemOneProvider Provider { get; set; }
     public Uri BaseUri { get; set; } = new("https://api.typesafe.ai/");
     public string DefaultModel { get; set; } = "jev-latest";
     public TimeSpan Timeout { get; set; } = TimeSpan.FromSeconds(60);
@@ -40,6 +42,8 @@ public sealed class RetryPolicy
 /// <summary>Per-call timeout, retry, header, query, auth, and body overrides.</summary>
 public sealed class RequestOptions
 {
+    /// <summary>Celeris-specific explanation and image resolution options.</summary>
+    public CelerisDecisionOptions? Celeris { get; set; }
     public TimeSpan? Timeout { get; set; }
     public RetryPolicy? Retry { get; set; }
     public IDictionary<string, string> Headers { get; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);

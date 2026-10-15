@@ -35,6 +35,8 @@ public sealed class TypeSafeClient : ITypeSafeClient, IDisposable, IAsyncDisposa
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(apiKey);
         _options = options ?? new TypeSafeClientOptions();
+        if (!Enum.IsDefined(_options.Provider)) throw new ArgumentOutOfRangeException(nameof(options), "Unknown System One provider.");
+        Provider = _options.Provider;
         var generatedOptions = CreateGeneratedOptions(_options);
         _raw = new RawTypeSafeClient(
             httpClient,
@@ -44,6 +46,8 @@ public sealed class TypeSafeClient : ITypeSafeClient, IDisposable, IAsyncDisposa
             disposeHttpClient: httpClient is null);
         _raw.AuthorizeUsingBearer(apiKey);
         _raw.Options.Hooks.Add(_retryTracker);
+        if (!_raw.Options.Hooks.Any(static hook => hook is AutoSDKAuthorizationProviderHook))
+            _raw.Options.Hooks.Add(new AutoSDKAuthorizationProviderHook());
         ConfigureSerialization();
         _logger = _options.LoggerFactory?.CreateLogger<TypeSafeClient>();
         Models = new ModelsResource(this);
@@ -53,13 +57,19 @@ public sealed class TypeSafeClient : ITypeSafeClient, IDisposable, IAsyncDisposa
     {
         _raw = rawClient ?? throw new ArgumentNullException(nameof(rawClient));
         _options = options ?? new TypeSafeClientOptions();
+        if (!Enum.IsDefined(_options.Provider)) throw new ArgumentOutOfRangeException(nameof(options), "Unknown System One provider.");
+        Provider = _options.Provider;
         _raw.Options.Hooks.Add(_retryTracker);
+        if (!_raw.Options.Hooks.Any(static hook => hook is AutoSDKAuthorizationProviderHook))
+            _raw.Options.Hooks.Add(new AutoSDKAuthorizationProviderHook());
         ConfigureSerialization();
         _logger = _options.LoggerFactory?.CreateLogger<TypeSafeClient>();
         Models = new ModelsResource(this);
     }
 
     public RawTypeSafeClient RawClient => _raw;
+    /// <summary>The provider profile captured when this client was created.</summary>
+    public SystemOneProvider Provider { get; }
     public ModelsResource Models { get; }
 
     public static TypeSafeClient CreateFromEnvironment(HttpClient? httpClient = null, TypeSafeClientOptions? options = null)
@@ -113,7 +123,7 @@ public sealed class TypeSafeClient : ITypeSafeClient, IDisposable, IAsyncDisposa
         }
 
         using var activity = _options.EnableTelemetry ? ActivitySource.StartActivity("system_one", ActivityKind.Client) : null;
-        activity?.SetTag("gen_ai.system", "typesafe-ai");
+        activity?.SetTag("gen_ai.system", Provider == SystemOneProvider.Celeris ? "celeris" : "typesafe-ai");
         activity?.SetTag("gen_ai.request.model", model ?? _options.DefaultModel);
         activity?.SetTag("typesafe.question_count", questions.Count);
         var started = Stopwatch.GetTimestamp();
@@ -126,9 +136,9 @@ public sealed class TypeSafeClient : ITypeSafeClient, IDisposable, IAsyncDisposa
             var rawResponse = await SendWithRetryAsync(
                 (options, ct) => _raw.SystemoneV1SystemonePostAsResponseAsync(
                     request,
-                    typeSafeDangerZoneImages: request.Assets?.Count > 0 || questions.Values.Any(static q => q is BoxQuestion) || requestOptions?.EnableImages == true
+                    typeSafeDangerZoneImages: Provider == SystemOneProvider.TypeSafe && (request.Assets?.Count > 0 || questions.Values.Any(static q => q is BoxQuestion) || requestOptions?.EnableImages == true)
                         ? SystemoneV1SystemonePostTypeSafeDangerZoneImages.True : null,
-                    typeSafeDangerZoneLongContext: requestOptions?.EnableLongContext == true
+                    typeSafeDangerZoneLongContext: Provider == SystemOneProvider.TypeSafe && requestOptions?.EnableLongContext == true
                         ? SystemoneV1SystemonePostTypeSafeDangerZoneLongContext.True : null,
                     requestOptions: options, cancellationToken: ct),
                 requestOptions, cancellationToken).ConfigureAwait(false);
@@ -301,7 +311,9 @@ public sealed class TypeSafeClient : ITypeSafeClient, IDisposable, IAsyncDisposa
         {
             Compression = options?.Compression ?? _options.Compression,
         };
-        if (options?.Images.Count > 0)
+        if (Provider == SystemOneProvider.TypeSafe && options?.Celeris is not null)
+            throw new NotSupportedException("Typed Celeris options require the Celeris provider profile.");
+        if (Provider == SystemOneProvider.TypeSafe && options?.Images.Count > 0)
         {
             var images = options.Images.ToArray();
             var referenceBytes = 0;
@@ -331,6 +343,7 @@ public sealed class TypeSafeClient : ITypeSafeClient, IDisposable, IAsyncDisposa
                 request.AdditionalProperties[pair.Key] = pair.Value;
             }
         }
+        if (Provider == SystemOneProvider.Celeris) CelerisProvider.Prepare(request, questionElement, options);
         return request;
     }
 
@@ -482,7 +495,10 @@ public sealed class TypeSafeClient : ITypeSafeClient, IDisposable, IAsyncDisposa
             var usageElement = root.GetProperty("usage");
             static int? ReadCount(JsonElement usage, string name) => usage.TryGetProperty(name, out var value) && value.ValueKind != JsonValueKind.Null ? value.GetInt32() : null;
             var usage = new Usage(ReadCount(usageElement, "input_tokens"), ReadCount(usageElement, "output_tokens"));
-            return new SystemOneResponse(model, new AnswerCollection(answers), usage, metadata, root.Clone());
+            return new SystemOneResponse(model, new AnswerCollection(answers), usage, metadata, root.Clone())
+            {
+                Celeris = CelerisDecisionResponse.Decode(root),
+            };
         }
         catch (KeyNotFoundException exception)
         {
