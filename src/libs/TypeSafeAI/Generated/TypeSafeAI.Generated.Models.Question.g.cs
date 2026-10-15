@@ -124,6 +124,43 @@ namespace TypeSafeAI.Generated
         public global::TypeSafeAI.Generated.ScoreQuestion PickScore() => Score is { } value
             ? value
             : throw new global::System.InvalidOperationException($"Expected union variant 'Score' but the value was {ToString()}.");
+
+        /// <summary>
+        /// A question that locates what its instructions describe in the request's image. Requests with box questions must send the header TypeSafe-Danger-Zone-Images: true.
+        /// </summary>
+#if NET6_0_OR_GREATER
+        public global::TypeSafeAI.Generated.BoxQuestion? Box { get; init; }
+#else
+        public global::TypeSafeAI.Generated.BoxQuestion? Box { get; }
+#endif
+
+        /// <summary>
+        ///
+        /// </summary>
+#if NET6_0_OR_GREATER
+        [global::System.Diagnostics.CodeAnalysis.MemberNotNullWhen(true, nameof(Box))]
+#endif
+        public bool IsBox => Box != null;
+
+        /// <summary>
+        ///
+        /// </summary>
+        public bool TryPickBox(
+#if NET6_0_OR_GREATER
+            [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+#endif
+            out global::TypeSafeAI.Generated.BoxQuestion? value)
+        {
+            value = Box;
+            return IsBox;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        public global::TypeSafeAI.Generated.BoxQuestion PickBox() => Box is { } value
+            ? value
+            : throw new global::System.InvalidOperationException($"Expected union variant 'Box' but the value was {ToString()}.");
         /// <summary>
         ///
         /// </summary>
@@ -196,11 +233,35 @@ namespace TypeSafeAI.Generated
         /// <summary>
         ///
         /// </summary>
+        public static implicit operator Question(global::TypeSafeAI.Generated.BoxQuestion value) => new Question((global::TypeSafeAI.Generated.BoxQuestion?)value);
+
+        /// <summary>
+        ///
+        /// </summary>
+        public static implicit operator global::TypeSafeAI.Generated.BoxQuestion?(Question @this) => @this.Box;
+
+        /// <summary>
+        ///
+        /// </summary>
+        public Question(global::TypeSafeAI.Generated.BoxQuestion? value)
+        {
+            Box = value;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        public static Question FromBox(global::TypeSafeAI.Generated.BoxQuestion? value) => new Question(value);
+
+        /// <summary>
+        ///
+        /// </summary>
         public Question(
             global::TypeSafeAI.Generated.QuestionDiscriminatorType? type,
             global::TypeSafeAI.Generated.NoulQuestion? noul,
             global::TypeSafeAI.Generated.ChoiceQuestion? choice,
-            global::TypeSafeAI.Generated.ScoreQuestion? score
+            global::TypeSafeAI.Generated.ScoreQuestion? score,
+            global::TypeSafeAI.Generated.BoxQuestion? box
             )
         {
             Type = type;
@@ -208,12 +269,14 @@ namespace TypeSafeAI.Generated
             Noul = noul;
             Choice = choice;
             Score = score;
+            Box = box;
         }
 
         /// <summary>
         ///
         /// </summary>
         public object? Object =>
+            Box as object ??
             Score as object ??
             Choice as object ??
             Noul as object
@@ -225,7 +288,8 @@ namespace TypeSafeAI.Generated
         public override string? ToString() =>
             Noul?.ToString() ??
             Choice?.ToString() ??
-            Score?.ToString()
+            Score?.ToString() ??
+            Box?.ToString()
             ;
 
         /// <summary>
@@ -233,7 +297,7 @@ namespace TypeSafeAI.Generated
         /// </summary>
         public bool Validate()
         {
-            return IsNoul && !IsChoice && !IsScore || !IsNoul && IsChoice && !IsScore || !IsNoul && !IsChoice && IsScore;
+            return IsNoul && !IsChoice && !IsScore && !IsBox || !IsNoul && IsChoice && !IsScore && !IsBox || !IsNoul && !IsChoice && IsScore && !IsBox || !IsNoul && !IsChoice && !IsScore && IsBox;
         }
 
         /// <summary>
@@ -243,6 +307,7 @@ namespace TypeSafeAI.Generated
             global::System.Func<global::TypeSafeAI.Generated.NoulQuestion, TResult>? noul = null,
             global::System.Func<global::TypeSafeAI.Generated.ChoiceQuestion, TResult>? choice = null,
             global::System.Func<global::TypeSafeAI.Generated.ScoreQuestion, TResult>? score = null,
+            global::System.Func<global::TypeSafeAI.Generated.BoxQuestion, TResult>? box = null,
             bool validate = true)
         {
             if (validate)
@@ -262,6 +327,10 @@ namespace TypeSafeAI.Generated
             {
                 return score(__value2);
             }
+            else if (Box is { } __value3 && box != null)
+            {
+                return box(__value3);
+            }
 
             return default(TResult);
         }
@@ -275,6 +344,8 @@ namespace TypeSafeAI.Generated
             global::System.Action<global::TypeSafeAI.Generated.ChoiceQuestion>? choice = null,
 
             global::System.Action<global::TypeSafeAI.Generated.ScoreQuestion>? score = null,
+
+            global::System.Action<global::TypeSafeAI.Generated.BoxQuestion>? box = null,
             bool validate = true)
         {
             if (validate)
@@ -293,6 +364,10 @@ namespace TypeSafeAI.Generated
             else if (Score is { } __value2)
             {
                 score?.Invoke(__value2);
+            }
+            else if (Box is { } __value3)
+            {
+                box?.Invoke(__value3);
             }
         }
 
@@ -303,6 +378,7 @@ namespace TypeSafeAI.Generated
             global::System.Action<global::TypeSafeAI.Generated.NoulQuestion>? noul = null,
             global::System.Action<global::TypeSafeAI.Generated.ChoiceQuestion>? choice = null,
             global::System.Action<global::TypeSafeAI.Generated.ScoreQuestion>? score = null,
+            global::System.Action<global::TypeSafeAI.Generated.BoxQuestion>? box = null,
             bool validate = true)
         {
             if (validate)
@@ -321,6 +397,10 @@ namespace TypeSafeAI.Generated
             else if (Score is { } __value2)
             {
                 score?.Invoke(__value2);
+            }
+            else if (Box is { } __value3)
+            {
+                box?.Invoke(__value3);
             }
         }
 
@@ -337,6 +417,8 @@ namespace TypeSafeAI.Generated
                 typeof(global::TypeSafeAI.Generated.ChoiceQuestion),
                 Score,
                 typeof(global::TypeSafeAI.Generated.ScoreQuestion),
+                Box,
+                typeof(global::TypeSafeAI.Generated.BoxQuestion),
             };
             const int offset = unchecked((int)2166136261);
             const int prime = 16777619;
@@ -355,7 +437,8 @@ namespace TypeSafeAI.Generated
             return
                 global::System.Collections.Generic.EqualityComparer<global::TypeSafeAI.Generated.NoulQuestion?>.Default.Equals(Noul, other.Noul) &&
                 global::System.Collections.Generic.EqualityComparer<global::TypeSafeAI.Generated.ChoiceQuestion?>.Default.Equals(Choice, other.Choice) &&
-                global::System.Collections.Generic.EqualityComparer<global::TypeSafeAI.Generated.ScoreQuestion?>.Default.Equals(Score, other.Score)
+                global::System.Collections.Generic.EqualityComparer<global::TypeSafeAI.Generated.ScoreQuestion?>.Default.Equals(Score, other.Score) &&
+                global::System.Collections.Generic.EqualityComparer<global::TypeSafeAI.Generated.BoxQuestion?>.Default.Equals(Box, other.Box)
                 ;
         }
 

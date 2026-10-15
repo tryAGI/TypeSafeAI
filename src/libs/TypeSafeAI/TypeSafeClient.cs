@@ -124,7 +124,8 @@ public sealed class TypeSafeClient : ITypeSafeClient, IDisposable, IAsyncDisposa
             _retryTracker.Reset();
             var request = CreateRequest(state, questions, model ?? _options.DefaultModel, requestOptions);
             var rawResponse = await SendWithRetryAsync(
-                (options, ct) => _raw.SystemoneV1SystemonePostAsResponseAsync(request, options, ct),
+                (options, ct) => _raw.SystemoneV1SystemonePostAsResponseAsync(
+                    request, requestOptions: options, cancellationToken: ct),
                 requestOptions, cancellationToken).ConfigureAwait(false);
             var response = Decode(rawResponse, _retryTracker.RetryCount);
             activity?.SetTag("gen_ai.response.model", response.Model);
@@ -288,7 +289,8 @@ public sealed class TypeSafeClient : ITypeSafeClient, IDisposable, IAsyncDisposa
                 static property => property.Name,
                 property => JsonSerializer.Deserialize(property.Value,
                     (JsonTypeInfo<Generated.Question>)_raw.JsonSerializerContext.GetTypeInfo(typeof(Generated.Question))!),
-                StringComparer.Ordinal));
+                StringComparer.Ordinal),
+            assets: null);
         if (options is not null)
         {
             foreach (var pair in options.ExtraBody)
