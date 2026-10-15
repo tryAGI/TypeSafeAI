@@ -10,6 +10,7 @@ nav:
 - Documentation coverage: reference-coverage.md
 - Guides:
   - Providers and Celeris: guides/providers.md
+  - Hosted decisions and JevBench: guides/jevbench-providers.md
   - Microsoft.Extensions.AI: guides/meai.md
   - Images and Box: guides/images.md
   - Advanced structure: guides/structure.md

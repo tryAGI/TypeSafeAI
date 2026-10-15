@@ -31,9 +31,12 @@ Tests are local HTTP contract fixtures. They establish serialization, parsing, a
 Celeris's compatible System One endpoint is supported by an explicit provider
 profile, separate from this TypeSafe documentation audit. Typed Celeris options,
 explanations, image translation, and provider-specific validation are covered by
-`Tests.Celeris.cs` and the native smoke program. See the
+`Tests.Celeris.cs`, `Tests.CelerisDiscovery.cs`, and the native smoke program.
+`Tests.HostedProviders.cs` covers the additional decision-provider adapters. See the
 [provider guide](guides/providers.md); compatibility is scoped to the documented
-System One surface and is not proof of live provider acceptance.
+System One surface and is not proof of live provider acceptance. The separately
+sourced [hosted-provider inventory](guides/jevbench-providers.md) records compatibility
+and gaps for the wider JevBench cloud roster.
 
 - .NET uses documented gzip compression on request; it does not bundle Node/Python's native zstd runtime. Compression defaults to none and can be overridden per call.
 - Image uploads use an explicit reference-to-asset map. Python inline objects and JavaScript tagged templates have the same wire capability through ImageAsset.Reference and RequestOptions.Images; their language syntax is not reproduced.

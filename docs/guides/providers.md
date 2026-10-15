@@ -1,7 +1,8 @@
 # Providers and Celeris Decision
 
 `tryAGI.TypeSafeAI` supports TypeSafe's System One API and Celeris Decision's
-compatible System One endpoint. The handwritten client selects provider-specific
+compatible System One endpoint, plus the hosted decision providers listed in
+[the provider inventory](jevbench-providers.md). The handwritten client selects provider-specific
 image encoding and capability checks; the HTTP transport remains AutoSDK-generated.
 
 ## Celeris quickstart
@@ -104,22 +105,39 @@ silently replacing it. Request options and raw JSON objects are not mutated.
 | Gzip request compression | Supported | Rejected; this adapter uses the documented JSON contract |
 | Typed explanation and image resolution options | Rejected | Supported |
 | Model | Configurable Jev model/alias | `celeris-1-decision` |
-| Model discovery | Generated TypeSafe model metadata | Still uses the generated metadata schema; Celeris acceptance is unverified |
+| Model discovery | Generated TypeSafe model metadata | OpenAI-style `data`/`id` metadata, adapted through generated transport |
 | Streaming | Not implemented by System One | Not supported by System One |
 | Raw response, replay, retry/cancellation/timeout options | Supported | Supported |
 
-Select the Celeris profile explicitly when configuring dependency injection or
-constructing a client without the factory. Changing only the base URL leaves the
-TypeSafe image transport selected:
+## Model discovery and dependency injection
 
 ```csharp
-services.AddTypeSafeClient("CELERIS_API_KEY", options =>
+var models = await client.Models.ListAsync();
+foreach (var model in models)
+    Console.WriteLine($"{model.Name}: {model.OwnedBy}, created {model.CreatedAt}");
+
+services.AddCelerisClient("CELERIS_API_KEY", options =>
 {
-    options.Provider = SystemOneProvider.Celeris;
-    options.BaseUri = new Uri(CustomProviders.CelerisBaseUrl);
-    options.DefaultModel = CustomProviders.CelerisModel;
+    options.Timeout = TimeSpan.FromSeconds(10);
+    options.Retry = RetryPolicy.None;
 });
+// Alternatively: services.AddCelerisClientFromEnvironment();
 ```
+
+`AddCelerisClient` shares the factory's endpoint, default model, and profile, and
+registers `TypeSafeClient` and `ITypeSafeClient`. Configure its HTTP handler through
+the returned `IHttpClientBuilder`. The environment helper reads `CELERIS_API_KEY`
+and rejects missing, empty, or whitespace-only values. As with `AddTypeSafeClient`,
+the unkeyed registration represents one selected provider per service collection.
+
+Discovery calls the model-specific base plus `/v1/models`. Celeris documents an
+OpenAI-style `data` array with `id`, `created`, and `owned_by`; it is adapted without
+replacing generated auth, retries, cancellation, or request options. `Name` maps to
+`id`, `CreatedAt` parses Unix seconds, and `OwnedBy` retains the owner. Missing
+description and release date are empty strings; `ReleasedAt` stays null rather
+than treating creation time as a release. `RawJson` preserves each model's full
+payload, including future context and capability fields. A compatible native
+`models` array also works. `Models.List()` is the synchronous equivalent.
 
 The profile is captured when the client is constructed. Calls through `RawClient`
 bypass the handwritten provider adapter; raw callers own encoding and validation.
@@ -142,11 +160,12 @@ Local contract tests cover image translation, all resolution values, typed
 explanations and replay, request bounds, unsupported capabilities, extension
 collisions, retries, HTTP errors, caller-owned transport, and AI-function reuse.
 The native smoke executable covers the Celeris image/options/explanation path
-without network access. These checks do not establish live model acceptance,
+without network access, including discovery and dependency injection. These checks do not establish live model acceptance,
 accuracy, latency, calibration, pricing, or billing. Provider errors retain their
 HTTP status and body through the existing TypeSafe exception hierarchy.
 
 Provider contracts reviewed on 2026-10-15:
+[Celeris API reference](https://docs.celeris.ai/api-reference),
 [Celeris Decisions](https://docs.celeris.ai/decisions),
 [Celeris image resolution](https://docs.celeris.ai/images#image-resolution),
 and [TypeSafe images](https://docs.typesafe.ai/images).

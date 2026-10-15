@@ -11,6 +11,8 @@ public sealed partial class SystemOneRequest
     internal RequestCompression Compression { get; set; }
     [JsonIgnore]
     internal int? MaximumRequestBytes { get; set; }
+    [JsonIgnore]
+    internal bool UseDecisionsPath { get; set; }
 }
 
 public partial class RawTypeSafeClient
@@ -22,6 +24,13 @@ public partial class RawTypeSafeClient
         SystemoneV1SystemonePostTypeSafeDangerZoneLongContext? typeSafeDangerZoneLongContext,
         SystemOneRequest request)
     {
+        if (request.UseDecisionsPath)
+        {
+            // Keep the generated base prefix and query; change only this operation's final segment.
+            var uri = httpRequestMessage.RequestUri!;
+            var builder = new UriBuilder(uri) { Path = uri.AbsolutePath[..^"systemone".Length] + "decisions" };
+            httpRequestMessage.RequestUri = builder.Uri;
+        }
         if (request.MaximumRequestBytes is { } maximum && httpRequestMessage.Content!.Headers.ContentLength > maximum)
             throw new ArgumentException($"The encoded request exceeds the provider's {maximum}-byte body limit.", nameof(request));
         if (request.MultipartImages is { Length: > 0 } images)

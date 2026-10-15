@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.AI;
+using Microsoft.Extensions.DependencyInjection;
 using TypeSafeAI;
 using TypeSafeAI.Extensions.AI;
 
@@ -46,6 +47,31 @@ var celerisResponse = await celeris.SystemOneAsync(JsonContent.Parse("""{"image"
 if (celerisResponse.Celeris?.Explanations["ok"] != "The receipt is visible." ||
     TypeSafeClient.FromHttpResponse(celerisResponse.RawJson.GetRawText()).Celeris?.Explanations["ok"] != "The receipt is visible.")
     throw new InvalidOperationException("Celeris typed explanations or replay did not survive NativeAOT.");
+var celerisModels = await celeris.Models.ListAsync();
+if (celerisModels[0].Name != CustomProviders.CelerisModel || celerisModels[0].CreatedAt?.ToUnixTimeSeconds() != 1791763200 ||
+    celerisModels[0].OwnedBy != "celeris" || !celerisModels[0].RawJson.GetProperty("future").GetBoolean() || celerisModels[0].ReleasedAt is not null)
+    throw new InvalidOperationException("Celeris model discovery metadata did not survive NativeAOT.");
+var services = new ServiceCollection();
+services.AddCelerisClient("fixture-not-a-secret").ConfigurePrimaryHttpMessageHandler(() => new CelerisFixtureHandler());
+using var provider = services.BuildServiceProvider();
+if (provider.GetRequiredService<ITypeSafeClient>() is not TypeSafeClient diClient ||
+    (await diClient.Models.ListAsync())[0].Name != CustomProviders.CelerisModel)
+    throw new InvalidOperationException("Celeris dependency injection did not survive NativeAOT.");
+using var decisionHttp = new HttpClient(new DecisionFixtureHandler());
+using var inception = CustomProviders.Inception("fixture", decisionHttp);
+var inlineOptions = new RequestOptions();
+inlineOptions.Images.Add("receipt", image);
+await inception.SystemOneAsync("fixture", new Dictionary<string, Question> { ["ok"] = new NoulQuestion("visible") }, requestOptions: inlineOptions);
+using var fastinoHttp = new HttpClient(new FastinoFixtureHandler());
+using var fastino = CustomProviders.Fastino("fixture", fastinoHttp);
+var fastinoQuestions = new Dictionary<string, Question> { ["urgency"] = ScoreQuestion.FromValues(["Low", "High"], "Urgency?") };
+var fastinoResponse = await fastino.SystemOneAsync("fixture", fastinoQuestions);
+var fastinoProjection = await fastino.SystemOneAsync("fixture", fastinoQuestions, SmokeJsonContext.Default.FastinoProjection);
+if (fastinoResponse.Get<ScoreAnswer>("urgency").Score != 0.25 || fastinoProjection.Urgency?.Score != 0.25 ||
+    TypeSafeClient.FromHttpResponse(fastinoResponse.RawJson.GetRawText()).Get<ScoreAnswer>("urgency").Score != 0.25)
+    throw new InvalidOperationException("Fastino expected score, projection, or replay was lost.");
+Console.WriteLine("Fastino expected score, projection, and replay passed.");
+Console.WriteLine("Celeris model discovery, dependency injection, and hosted Decisions image transport passed.");
 Console.WriteLine("NativeAOT transport, enum labels, projection, structure, compression, images, boxes, usage, future answers, AI function, and Celeris images/resolution/explanations/replay passed.");
 
 enum Intent
@@ -62,8 +88,14 @@ sealed class Projection
     [OptionalAnswer] public NoulAnswer? Absent { get; set; }
 }
 
+sealed class FastinoProjection
+{
+    public ScoreAnswer? Urgency { get; set; }
+}
+
 [JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
 [JsonSerializable(typeof(Projection))]
+[JsonSerializable(typeof(FastinoProjection))]
 internal partial class SmokeJsonContext : JsonSerializerContext;
 
 sealed class FixtureHandler : HttpMessageHandler
@@ -91,6 +123,12 @@ sealed class CelerisFixtureHandler : HttpMessageHandler
 {
     protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {
+        if (request.Method == HttpMethod.Get)
+        {
+            if (request.RequestUri != new Uri("https://inference.celeris.ai/celeris-1-decision/v1/models"))
+                throw new InvalidOperationException("Celeris discovery path was lost.");
+            return new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("""{"data":[{"id":"celeris-1-decision","created":1791763200,"owned_by":"celeris","future":true}]}""") };
+        }
         if (request.RequestUri != new Uri("https://inference.celeris.ai/celeris-1-decision/v1/systemone") ||
             request.Headers.Contains("TypeSafe-Danger-Zone-Images") || request.Content!.Headers.ContentType!.MediaType != "application/json")
             throw new InvalidOperationException("The Celeris transport profile was lost.");
@@ -105,4 +143,22 @@ sealed class CelerisFixtureHandler : HttpMessageHandler
             Content = new StringContent("""{"model":"celeris-1-decision","answers":{"ok":{"type":"noul","noul":0.95}},"usage":{"input_tokens":122,"output_tokens":15},"x_celeris":{"explanations":{"ok":"The receipt is visible."}}}"""),
         };
     }
+}
+
+sealed class DecisionFixtureHandler : HttpMessageHandler
+{
+    protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+    {
+        using var body = JsonDocument.Parse(await request.Content!.ReadAsStringAsync(cancellationToken));
+        if (request.RequestUri != new Uri("https://api.inceptionlabs.ai/v1/decisions") ||
+            body.RootElement.GetProperty("state")[2].GetProperty("image_url").GetProperty("url").GetString() != "data:image/png;base64,iVBORw==")
+            throw new InvalidOperationException("Hosted Decisions image transport was lost.");
+        return new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("""{"model":"mercury-decide","answers":{"ok":{"type":"noul","noul":0.95}},"usage":{"input_tokens":1,"output_tokens":1}}""") };
+    }
+}
+
+sealed class FastinoFixtureHandler : HttpMessageHandler
+{
+    protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken) =>
+        Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("""{"model":"glide","answers":{"urgency":{"type":"score","score":0,"expected_level":0.25,"confidence":0.5,"probabilities":{"0":0.75,"1":0.25},"legend":{"0":"Low","1":"High"}}},"usage":{"input_tokens":90,"output_tokens":1}}""") });
 }

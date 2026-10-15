@@ -42,6 +42,15 @@ Support follows the current [Images](https://docs.typesafe.ai/images) and [Box](
 
 The generated OpenAPI already models these wire types. Handwritten extensions add the public API and multipart content using a generated request hook, preserving generated authentication, retries, timeout, cancellation, and error handling. Local wire tests use synthetic bytes and mocked HTTP responses; they do not establish live image acceptance or model accuracy.
 
+## Hosted decision providers
+
+Celeris model discovery and `AddCelerisClient` share its factory defaults.
+[The hosted-provider inventory](guides/jevbench-providers.md) records additional
+System One/Decisions profiles, provider-specific image formats, GLiDE expected-score
+mapping, source contracts, benchmark distinctions, and remaining incompatible or
+access-gated services. This extends the provider surface without claiming identical
+model quality or live acceptance.
+
 ## Examples audited
 
 Celeris Decision is also available through `CustomProviders.Celeris`. The provider
@@ -66,6 +75,15 @@ The matrix describes capabilities, not identical public APIs or proof that every
 Retry policy additionally supports configurable HTTP statuses, connection/timeout switches, custom predicates, a total budget, and an injectable delay clock. The SDK does not claim automatic retries are free: ambiguous transport failures may already have incurred server work. Use `RetryPolicy.None` for latency-sensitive or non-replayable calls.
 
 ## Verification
+
+On 2026-10-16, the hosted-provider and Celeris discovery/DI additions passed
+148 local tests, with 9 credential-dependent/opt-in tests skipped. Fixtures cover
+provider URLs and prefixes, per-call auth/query and retries, model metadata,
+malformed discovery responses, image shapes/counts/bytes, unsupported features,
+criterion bounds, GLiDE weighted scores/projection/replay, and environment DI.
+The expanded NativeAOT smoke is queued through host build admission; a successful
+publish and execution are required before claiming native verification for these additions.
+
 
 The Celeris provider addition passed the full local suite: 87 tests passed and
 9 credential-dependent/opt-in tests skipped. Its contract fixtures exercise the

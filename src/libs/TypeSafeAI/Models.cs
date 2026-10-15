@@ -6,6 +6,10 @@ namespace TypeSafeAI;
 /// <summary>A model name or alias accepted by System One.</summary>
 public sealed record ModelMetadata(string Name, string Description, string ReleaseDate)
 {
+    /// <summary>Creation time from providers that report Unix created timestamps; not a release date.</summary>
+    public DateTimeOffset? CreatedAt { get; init; }
+    public string? OwnedBy { get; init; }
+    public JsonElement RawJson { get; init; }
     public DateTimeOffset? ReleasedAt => DateTimeOffset.TryParse(ReleaseDate, out var value) ? value : null;
 }
 

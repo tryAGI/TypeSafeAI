@@ -123,7 +123,7 @@ public sealed class TypeSafeClient : ITypeSafeClient, IDisposable, IAsyncDisposa
         }
 
         using var activity = _options.EnableTelemetry ? ActivitySource.StartActivity("system_one", ActivityKind.Client) : null;
-        activity?.SetTag("gen_ai.system", Provider == SystemOneProvider.Celeris ? "celeris" : "typesafe-ai");
+        activity?.SetTag("gen_ai.system", Provider == SystemOneProvider.TypeSafe ? "typesafe-ai" : Provider.ToString().ToLowerInvariant());
         activity?.SetTag("gen_ai.request.model", model ?? _options.DefaultModel);
         activity?.SetTag("typesafe.question_count", questions.Count);
         var started = Stopwatch.GetTimestamp();
@@ -215,6 +215,14 @@ public sealed class TypeSafeClient : ITypeSafeClient, IDisposable, IAsyncDisposa
     {
         var response = await SystemOneAsync(state, questions, model, requestOptions, cancellationToken).ConfigureAwait(false);
         var answerJson = response.RawJson.GetProperty("answers");
+        if (response.Model == "glide")
+        {
+            // GLiDE's score is an argmax index; projections use the SDK's expected-score semantics.
+            var normalized = System.Text.Json.Nodes.JsonNode.Parse(answerJson.GetRawText())!.AsObject();
+            foreach (var pair in response.Answers)
+                if (pair.Value is ScoreAnswer score) normalized[pair.Key]!["score"] = score.Score;
+            answerJson = JsonContent.FromNode(normalized).Value;
+        }
         foreach (var property in responseTypeInfo.Properties)
         {
             if (!typeof(Answer).IsAssignableFrom(property.PropertyType) && !property.IsRequired) continue;
@@ -287,6 +295,7 @@ public sealed class TypeSafeClient : ITypeSafeClient, IDisposable, IAsyncDisposa
         // The API permits 64 levels within each content field, in addition to its envelope.
         var options = new JsonSerializerOptions(_raw.JsonSerializerContext.Options) { MaxDepth = JsonContent.EnvelopeMaxDepth };
         options.Converters.Insert(0, new NullableUsageConverter());
+        if (Provider != SystemOneProvider.TypeSafe) options.Converters.Insert(0, new CompatibleModelListConverter());
         options.Converters.Insert(0, new ForwardCompatibleQuestionConverter());
         options.Converters.Insert(0, new ForwardCompatibleAnswerConverter());
         _raw.JsonSerializerContext = new SourceGenerationContext(options);
@@ -344,6 +353,7 @@ public sealed class TypeSafeClient : ITypeSafeClient, IDisposable, IAsyncDisposa
             }
         }
         if (Provider == SystemOneProvider.Celeris) CelerisProvider.Prepare(request, questionElement, options);
+        else if (Provider != SystemOneProvider.TypeSafe) HostedProvider.Prepare(Provider, request, state.Value, questionElement, options);
         return request;
     }
 
@@ -490,7 +500,7 @@ public sealed class TypeSafeClient : ITypeSafeClient, IDisposable, IAsyncDisposa
             var answers = new Dictionary<string, Answer>(StringComparer.Ordinal);
             foreach (var property in root.GetProperty("answers").EnumerateObject())
             {
-                answers[property.Name] = DecodeAnswer(property.Value, $"answers.{property.Name}");
+                answers[property.Name] = DecodeAnswer(property.Value, $"answers.{property.Name}", model == "glide");
             }
             var usageElement = root.GetProperty("usage");
             static int? ReadCount(JsonElement usage, string name) => usage.TryGetProperty(name, out var value) && value.ValueKind != JsonValueKind.Null ? value.GetInt32() : null;
@@ -510,7 +520,7 @@ public sealed class TypeSafeClient : ITypeSafeClient, IDisposable, IAsyncDisposa
         }
     }
 
-    private static Answer DecodeAnswer(JsonElement element, string path)
+    private static Answer DecodeAnswer(JsonElement element, string path, bool useExpectedLevel)
     {
         var type = element.TryGetProperty("type", out var typeElement) ? typeElement.GetString() : null;
         return type switch
@@ -522,7 +532,7 @@ public sealed class TypeSafeClient : ITypeSafeClient, IDisposable, IAsyncDisposa
                 ReadDoubleDictionary(element.GetProperty("probabilities"))) { RawJson = element.Clone() },
             "box" => DecodeBox(element, path),
             "score" => new ScoreAnswer(
-                element.GetProperty("score").GetDouble(),
+                (useExpectedLevel ? element.GetProperty("expected_level") : element.GetProperty("score")).GetDouble(),
                 element.GetProperty("confidence").GetDouble(),
                 ReadElementDictionary(element.GetProperty("legend")),
                 ReadDoubleDictionary(element.GetProperty("probabilities"))) { RawJson = element.Clone() },
@@ -579,11 +589,19 @@ public sealed class TypeSafeClient : ITypeSafeClient, IDisposable, IAsyncDisposa
         {
             try
             {
+                if (client.Provider is SystemOneProvider.Perplexity or SystemOneProvider.Liquid or SystemOneProvider.Wity or
+                    SystemOneProvider.Milliseconds or SystemOneProvider.Instinct or SystemOneProvider.MicrosoftDecision or SystemOneProvider.Compatible or
+                    SystemOneProvider.Bespoke or SystemOneProvider.Fastino or SystemOneProvider.Amos)
+                    throw new NotSupportedException("Model discovery is not documented for this provider profile. Set model explicitly.");
                 client._retryTracker.Reset();
                 var response = await client.SendWithRetryAsync(
                     (options, ct) => client._raw.ModelsV1V1ModelsGetAsync(options, ct), requestOptions, cancellationToken).ConfigureAwait(false);
-                return response.Models.Select(static model =>
-                    new ModelMetadata(model.Name, model.Description, model.ReleaseDate)).ToArray();
+                return response.Models.Select(model => CompatibleModelListConverter.Project(model,
+                    (JsonTypeInfo<Generated.ModelMetadata>)client._raw.JsonSerializerContext.GetTypeInfo(typeof(Generated.ModelMetadata))!)).ToArray();
+            }
+            catch (ApiException exception) when ((int)exception.StatusCode is >= 200 and < 300 && exception.InnerException is JsonException)
+            {
+                throw new TypeSafeResponseValidationException("The model-list response did not match the API contract.", inner: exception.InnerException);
             }
             catch (ApiException exception)
             {

@@ -67,6 +67,17 @@ Set `TYPESAFE_API_KEY` and use `TypeSafeClient.CreateFromEnvironment()` when you
 
 See the [feature parity matrix](https://tryagi.github.io/TypeSafeAI/feature-parity/) for the audited upstream surface and [Microsoft.Extensions.AI guide](https://tryagi.github.io/TypeSafeAI/guides/meai/) for guardrails, routing, tools, and evaluation.
 
+## Hosted decision providers
+
+Use `CustomProviders.Celeris`, `Perplexity`, `Inception`, `Liquid`, `Wity`, `SubQ`,
+`Sage`, `Vansa`, `Milliseconds`, `Instinct`, `Classifier`, `Bespoke`, `Surd`,
+`Fastino`, `Amos`, or `MicrosoftDecision` to reuse typed System One questions.
+Celeris also supports `Models.ListAsync()` and `services.AddCelerisClient(key)`.
+See [provider setup](docs/guides/providers.md) and the
+[hosted-provider inventory](docs/guides/jevbench-providers.md) for endpoint,
+image, discovery, score, and benchmark differences. These adapters have offline
+contract tests; provider quality and live acceptance require separate evaluation.
+
 ## Celeris Decision
 
 Use `CustomProviders.Celeris("CELERIS_API_KEY")` for the compatible System One endpoint.

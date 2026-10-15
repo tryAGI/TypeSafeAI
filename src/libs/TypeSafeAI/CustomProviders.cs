@@ -5,10 +5,26 @@ public enum SystemOneProvider
 {
     TypeSafe,
     Celeris,
+    Perplexity,
+    Inception,
+    Liquid,
+    Wity,
+    SubQ,
+    Sage,
+    Vansa,
+    Milliseconds,
+    Instinct,
+    Classifier,
+    MicrosoftDecision,
+    Compatible,
+    Bespoke,
+    Surd,
+    Fastino,
+    Amos,
 }
 
 /// <summary>Factories for compatible System One providers.</summary>
-public static class CustomProviders
+public static partial class CustomProviders
 {
     /// <summary>The base URL without /v1; the generated transport appends /v1/systemone.</summary>
     public const string CelerisBaseUrl = "https://inference.celeris.ai/celeris-1-decision/";
@@ -23,6 +39,12 @@ public static class CustomProviders
         HttpClient? httpClient = null,
         Action<TypeSafeClientOptions>? configure = null)
     {
+        var options = CreateCelerisOptions(configure);
+        return new TypeSafeClient(apiKey, httpClient, options);
+    }
+
+    internal static TypeSafeClientOptions CreateCelerisOptions(Action<TypeSafeClientOptions>? configure)
+    {
         var options = new TypeSafeClientOptions
         {
             Provider = SystemOneProvider.Celeris,
@@ -32,6 +54,6 @@ public static class CustomProviders
         configure?.Invoke(options);
         if (options.Provider != SystemOneProvider.Celeris)
             throw new ArgumentException("The Celeris factory requires the Celeris provider profile.", nameof(configure));
-        return new TypeSafeClient(apiKey, httpClient, options);
+        return options;
     }
 }

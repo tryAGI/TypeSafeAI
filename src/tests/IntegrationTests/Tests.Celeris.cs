@@ -332,7 +332,7 @@ public partial class Tests
         client.Provider.Should().Be(SystemOneProvider.Celeris);
         var wrongProfile = () => CustomProviders.Celeris("test", configure: options => options.Provider = SystemOneProvider.TypeSafe);
         wrongProfile.Should().Throw<ArgumentException>();
-        var invalidProfile = () => new TypeSafeClient("test", options: new TypeSafeClientOptions { Provider = (SystemOneProvider)9 });
+        var invalidProfile = () => new TypeSafeClient("test", options: new TypeSafeClientOptions { Provider = (SystemOneProvider)int.MaxValue });
         invalidProfile.Should().Throw<ArgumentOutOfRangeException>();
     }
 
