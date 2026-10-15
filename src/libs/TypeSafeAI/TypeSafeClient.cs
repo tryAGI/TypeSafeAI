@@ -23,7 +23,7 @@ public sealed class TypeSafeClient : ITypeSafeClient, IDisposable, IAsyncDisposa
     private static readonly Histogram<double> Duration = Meter.CreateHistogram<double>("typesafe.request.duration", "ms");
     private static readonly HashSet<string> ProtectedHeaders = new(StringComparer.OrdinalIgnoreCase)
     {
-        "Authorization", "Content-Type", "Content-Length", "Host",
+        "Authorization", "Content-Type", "Content-Length", "Content-Encoding", "Host",
     };
 
     private readonly RawTypeSafeClient _raw;
@@ -128,14 +128,16 @@ public sealed class TypeSafeClient : ITypeSafeClient, IDisposable, IAsyncDisposa
                     request,
                     typeSafeDangerZoneImages: request.Assets?.Count > 0 || questions.Values.Any(static q => q is BoxQuestion) || requestOptions?.EnableImages == true
                         ? SystemoneV1SystemonePostTypeSafeDangerZoneImages.True : null,
+                    typeSafeDangerZoneLongContext: requestOptions?.EnableLongContext == true
+                        ? SystemoneV1SystemonePostTypeSafeDangerZoneLongContext.True : null,
                     requestOptions: options, cancellationToken: ct),
                 requestOptions, cancellationToken).ConfigureAwait(false);
             var response = Decode(rawResponse, _retryTracker.RetryCount);
             activity?.SetTag("gen_ai.response.model", response.Model);
             activity?.SetTag("gen_ai.usage.input_tokens", response.Usage.InputTokens);
-            if (_options.EnableTelemetry)
+            if (_options.EnableTelemetry && response.Usage.InputTokens is { } inputTokens)
             {
-                InputTokens.Add(response.Usage.InputTokens);
+                InputTokens.Add(inputTokens);
             }
             _logger?.LogDebug("TypeSafe System One returned {AnswerCount} answers using {InputTokens} input tokens.", response.Answers.Count, response.Usage.InputTokens);
             succeeded = true;
@@ -258,7 +260,7 @@ public sealed class TypeSafeClient : ITypeSafeClient, IDisposable, IAsyncDisposa
 
     public static SystemOneResponse FromHttpResponse(string json, ResponseMetadata? metadata = null)
     {
-        using var document = JsonDocument.Parse(json);
+        using var document = JsonDocument.Parse(json, new JsonDocumentOptions { MaxDepth = JsonContent.EnvelopeMaxDepth });
         return Decode(document.RootElement, metadata ?? new ResponseMetadata(HttpStatusCode.OK,
             new Dictionary<string, IEnumerable<string>>(), null, null));
     }
@@ -272,7 +274,9 @@ public sealed class TypeSafeClient : ITypeSafeClient, IDisposable, IAsyncDisposa
 
     private void ConfigureSerialization()
     {
-        var options = new JsonSerializerOptions(_raw.JsonSerializerContext.Options);
+        // The API permits 64 levels within each content field, in addition to its envelope.
+        var options = new JsonSerializerOptions(_raw.JsonSerializerContext.Options) { MaxDepth = JsonContent.EnvelopeMaxDepth };
+        options.Converters.Insert(0, new NullableUsageConverter());
         options.Converters.Insert(0, new ForwardCompatibleQuestionConverter());
         options.Converters.Insert(0, new ForwardCompatibleAnswerConverter());
         _raw.JsonSerializerContext = new SourceGenerationContext(options);
@@ -293,7 +297,10 @@ public sealed class TypeSafeClient : ITypeSafeClient, IDisposable, IAsyncDisposa
                 property => JsonSerializer.Deserialize(property.Value,
                     (JsonTypeInfo<Generated.Question>)_raw.JsonSerializerContext.GetTypeInfo(typeof(Generated.Question))!),
                 StringComparer.Ordinal),
-            assets: null);
+            assets: null)
+        {
+            Compression = options?.Compression ?? _options.Compression,
+        };
         if (options?.Images.Count > 0)
         {
             var images = options.Images.ToArray();
@@ -340,7 +347,7 @@ public sealed class TypeSafeClient : ITypeSafeClient, IDisposable, IAsyncDisposa
             }
             writer.WriteEndObject();
         }
-        using var document = JsonDocument.Parse(stream.ToArray());
+        using var document = JsonDocument.Parse(stream.ToArray(), new JsonDocumentOptions { MaxDepth = JsonContent.EnvelopeMaxDepth });
         return document.RootElement.Clone();
     }
 
@@ -473,7 +480,8 @@ public sealed class TypeSafeClient : ITypeSafeClient, IDisposable, IAsyncDisposa
                 answers[property.Name] = DecodeAnswer(property.Value, $"answers.{property.Name}");
             }
             var usageElement = root.GetProperty("usage");
-            var usage = new Usage(usageElement.GetProperty("input_tokens").GetInt32(), usageElement.GetProperty("output_tokens").GetInt32());
+            static int? ReadCount(JsonElement usage, string name) => usage.TryGetProperty(name, out var value) && value.ValueKind != JsonValueKind.Null ? value.GetInt32() : null;
+            var usage = new Usage(ReadCount(usageElement, "input_tokens"), ReadCount(usageElement, "output_tokens"));
             return new SystemOneResponse(model, new AnswerCollection(answers), usage, metadata, root.Clone());
         }
         catch (KeyNotFoundException exception)

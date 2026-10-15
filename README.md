@@ -19,8 +19,8 @@
     <p>The raw client is regenerated from the <a href="https://api.typesafe.ai/openapi.json">official OpenAPI definition</a>; typed questions, batching, routing, DI, and MEAI integrations are maintained as handwritten extensions.</p>
   </div>
   <div class="docs-feature-card">
-    <h3>Complete ecosystem parity</h3>
-    <p>Includes the official JavaScript/Python examples plus the strongest .NET features from TypeSafeAI.Net, typesafe-sdk-dotnet, and Jev.Net.</p>
+    <h3>Audited provider capabilities</h3>
+    <p>Supports the documented System One API, structured questions, images, and Box, with a published coverage audit and explicit runtime differences.</p>
   </div>
   <div class="docs-feature-card">
     <h3>Modern .NET</h3>
@@ -66,6 +66,12 @@ Console.WriteLine(result.Get(urgency).Score);
 Set `TYPESAFE_API_KEY` and use `TypeSafeClient.CreateFromEnvironment()` when you prefer environment configuration. The generated `TypeSafeAI.Generated.RawTypeSafeClient` remains public for direct OpenAPI-level access.
 
 See the [feature parity matrix](https://tryagi.github.io/TypeSafeAI/feature-parity/) for the audited upstream surface and [Microsoft.Extensions.AI guide](https://tryagi.github.io/TypeSafeAI/guides/meai/) for guardrails, routing, tools, and evaluation.
+
+## Advanced structure and API coverage
+
+State, instructions, Choice descriptions, Score levels, and Noul definitions support nested JSON. Use `JsonContent`, `ChoiceQuestion.FromCriteria`, and `ScoreQuestion.FromCriteria` for existing structured data. Structured Score legends retain their JSON shapes, including through replay. Content at the documented 64-level nesting limit is supported inside request/response envelopes.
+
+See the [Advanced structure guide](https://tryagi.github.io/TypeSafeAI/guides/structure/), [request options](https://tryagi.github.io/TypeSafeAI/guides/request-options/) (gzip compression and long context), and [full documentation coverage audit](https://tryagi.github.io/TypeSafeAI/reference-coverage/). Token counts are nullable when the provider does not report usage.
 
 ## Images and Box
 

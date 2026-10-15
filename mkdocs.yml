@@ -7,9 +7,12 @@ edit_uri: edit/main/docs/
 nav:
 - Overview: index.md
 - Feature parity: feature-parity.md
+- Documentation coverage: reference-coverage.md
 - Guides:
   - Microsoft.Extensions.AI: guides/meai.md
   - Images and Box: guides/images.md
+  - Advanced structure: guides/structure.md
+  - Request options: guides/request-options.md
 # EXAMPLES:START
 - Examples:
   - Generate: examples/generate.md

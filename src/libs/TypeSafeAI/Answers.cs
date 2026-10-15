@@ -55,7 +55,8 @@ public sealed record BoxAnswer(BoxCoordinates Box, double Confidence) : Answer("
 public sealed record RawAnswer(string Discriminator, JsonElement Value) : Answer(Discriminator);
 
 /// <summary>Input and output token accounting.</summary>
-public sealed record Usage(int InputTokens, int OutputTokens);
+// Nullable counts preserve "not reported" rather than presenting unknown usage as zero.
+public sealed record Usage(int? InputTokens, int? OutputTokens);
 
 /// <summary>Answers keyed by the caller's question names.</summary>
 public sealed class AnswerCollection : ReadOnlyDictionary<string, Answer>

@@ -13,6 +13,8 @@ public sealed class TypeSafeClientOptions
     public IDictionary<string, string> DefaultHeaders { get; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
     public ILoggerFactory? LoggerFactory { get; set; }
     public bool EnableTelemetry { get; set; } = true;
+    /// <summary>Optional request compression for bodies of at least 1 KiB. Defaults to none.</summary>
+    public RequestCompression Compression { get; set; }
 }
 
 /// <summary>Retry policy backed by AutoSDK's generated transport.</summary>
@@ -49,5 +51,9 @@ public sealed class RequestOptions
     public bool UseBase64Images { get; set; }
     /// <summary>Enable the experimental images header even when no image assets are supplied.</summary>
     public bool EnableImages { get; set; }
+    /// <summary>Opt in to the provider's experimental larger context limits for this request.</summary>
+    public bool EnableLongContext { get; set; }
+    /// <summary>Overrides client compression. Bodies below 1 KiB remain uncompressed.</summary>
+    public RequestCompression? Compression { get; set; }
     public string? ApiKey { get; set; }
 }

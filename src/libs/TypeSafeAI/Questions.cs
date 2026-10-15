@@ -64,6 +64,15 @@ public sealed record ChoiceQuestion : Question
     public IReadOnlyDictionary<string, JsonContent?> Criteria { get; }
     public JsonContent? Instructions { get; }
 
+    /// <summary>Uses a JSON object directly as option labels and structured descriptions, such as a taxonomy node.</summary>
+    public static ChoiceQuestion FromCriteria(JsonContent criteria, JsonContent? instructions = null)
+    {
+        if (criteria.Value.ValueKind != JsonValueKind.Object)
+            throw new ArgumentException("Choice criteria must be a JSON object.", nameof(criteria));
+        return new(criteria.Value.EnumerateObject().ToDictionary(
+            static property => property.Name, static property => (JsonContent?)property.Value, StringComparer.Ordinal), instructions);
+    }
+
     public static ChoiceQuestion FromValues(IEnumerable<string> choices, JsonContent? instructions = null) =>
         new(choices.ToDictionary(static value => value, static _ => (JsonContent?)null, StringComparer.Ordinal), instructions);
 
@@ -111,6 +120,14 @@ public sealed record ScoreQuestion : Question
     public IReadOnlyList<JsonContent> Criteria { get; }
     public JsonContent? Instructions { get; }
 
+    /// <summary>Uses a JSON array directly as the ordered structured level descriptions.</summary>
+    public static ScoreQuestion FromCriteria(JsonContent criteria, JsonContent? instructions = null)
+    {
+        if (criteria.Value.ValueKind != JsonValueKind.Array)
+            throw new ArgumentException("Score criteria must be a JSON array.", nameof(criteria));
+        return new(criteria.Value.EnumerateArray().Select(static value => (JsonContent)value), instructions);
+    }
+
     public static ScoreQuestion FromValues(IEnumerable<string> levels, JsonContent? instructions = null) =>
         new(levels.Select(static level => (JsonContent)level), instructions);
 
@@ -135,7 +152,7 @@ public sealed record ScoreQuestion : Question
 }
 
 /// <summary>Finds one target in an image. Requires a Jev 1.14-compatible model.</summary>
-public sealed record BoxQuestion(JsonContent Instructions) : Question
+public sealed record BoxQuestion(JsonContent Instructions = default) : Question
 {
     internal override void Write(Utf8JsonWriter writer)
     {

@@ -7,6 +7,8 @@ public sealed partial class SystemOneRequest
 {
     [JsonIgnore]
     internal (string Part, ImageAsset Image)[]? MultipartImages { get; set; }
+    [JsonIgnore]
+    internal RequestCompression Compression { get; set; }
 }
 
 public partial class RawTypeSafeClient
@@ -18,16 +20,20 @@ public partial class RawTypeSafeClient
         SystemoneV1SystemonePostTypeSafeDangerZoneLongContext? typeSafeDangerZoneLongContext,
         SystemOneRequest request)
     {
-        if (request.MultipartImages is not { Length: > 0 } images) return;
-        var multipart = new MultipartFormDataContent();
-        // Transfer ownership of the generated JSON content; disposing the request disposes all parts.
-        multipart.Add(httpRequestMessage.Content!, "request");
-        foreach (var (part, image) in images)
+        if (request.MultipartImages is { Length: > 0 } images)
         {
-            var content = new ByteArrayContent(image.Bytes);
-            content.Headers.ContentType = new MediaTypeHeaderValue(image.Format == "png" ? "image/png" : "image/jpeg");
-            multipart.Add(content, part, part + "." + image.Format);
+            var multipart = new MultipartFormDataContent();
+            // Transfer ownership of the generated JSON content; disposing the request disposes all parts.
+            multipart.Add(httpRequestMessage.Content!, "request");
+            foreach (var (part, image) in images)
+            {
+                var content = new ByteArrayContent(image.Bytes);
+                content.Headers.ContentType = new MediaTypeHeaderValue(image.Format == "png" ? "image/png" : "image/jpeg");
+                multipart.Add(content, part, part + "." + image.Format);
+            }
+            httpRequestMessage.Content = multipart;
         }
-        httpRequestMessage.Content = multipart;
+        if (request.Compression == RequestCompression.Gzip && httpRequestMessage.Content!.Headers.ContentLength >= 1024)
+            httpRequestMessage.Content = new GzipRequestContent(httpRequestMessage.Content);
     }
 }

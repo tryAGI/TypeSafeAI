@@ -107,7 +107,8 @@ public sealed class TypeSafeEvaluator : IEvaluator
             var metric = ToMetric(pair.Key, pair.Value, answer);
             metric.AddOrUpdateMetadata(MetadataPrefix + "model", response.Model);
             metric.AddOrUpdateMetadata(MetadataPrefix + "request_id", response.Metadata.RequestId ?? string.Empty);
-            metric.AddOrUpdateMetadata(MetadataPrefix + "usage.input_tokens", response.Usage.InputTokens.ToString(CultureInfo.InvariantCulture));
+            if (response.Usage.InputTokens is { } inputTokens)
+                metric.AddOrUpdateMetadata(MetadataPrefix + "usage.input_tokens", inputTokens.ToString(CultureInfo.InvariantCulture));
             metric.Interpretation = _options.Interpret?.Invoke(new TypeSafeMetricContext(pair.Key, metric.Name, pair.Value, answer, metric));
             metrics.Add(metric);
         }

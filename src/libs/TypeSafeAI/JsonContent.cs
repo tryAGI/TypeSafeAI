@@ -7,6 +7,7 @@ namespace TypeSafeAI;
 /// <summary>JSON-compatible state or instruction content with NativeAOT-safe factories.</summary>
 public readonly struct JsonContent
 {
+    internal const int EnvelopeMaxDepth = 80;
     private readonly JsonElement _value;
     private static readonly JsonElement NullValue = Parse("null")._value;
 

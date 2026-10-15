@@ -28,6 +28,14 @@ This SDK deliberately combines a generated raw transport with a first-class hand
 | NativeAOT/source-generated JSON | — | Yes | — | Yes | Yes |
 | Generated OpenAPI transport | official wire models | — | — | — | Yes |
 
+## Full documentation audit (2026-10-15)
+
+The [coverage inventory](reference-coverage.md) maps all 128 pages in the provider's documentation index to the .NET API, application-level patterns, runtime differences, or non-SDK material. The current OpenAPI exposes `GET /v1/models` and `POST /v1/systemone`; both are represented by generated and handwritten clients.
+
+The [structure guide](guides/structure.md) covers nested state, instructions, all criteria shapes, structured Score legends, and the 64-level field boundary. Additional options cover long context and dependency-free gzip request compression. Usage counts preserve null when unavailable, matching the published SDK contract even though the OpenAPI still declares integers. This makes `Usage.InputTokens` and `Usage.OutputTokens` nullable for .NET callers.
+
+This is an API capability mapping. It does not claim that Python/Node runtime packaging, zstd defaults, complete cookbook applications, or provider model quality are reproduced by the .NET package.
+
 ## Images and Box (2026-10-15)
 
 Support follows the current [Images](https://docs.typesafe.ai/images) and [Box](https://docs.typesafe.ai/primitives/box) contracts: multipart uploads, base64 JSON, custom or generated UUID references throughout nested state/instructions/criteria, mixed Box/Noul/Choice/Score requests, typed Box handles and grouped answers, replay, confidence, token usage, and custom response projection. See the [guide](guides/images.md).
@@ -51,6 +59,9 @@ The matrix describes capabilities, not identical public APIs or proof that every
 Retry policy additionally supports configurable HTTP statuses, connection/timeout switches, custom predicates, a total budget, and an injectable delay clock. The SDK does not claim automatic retries are free: ambiguous transport failures may already have incurred server work. Use `RetryPolicy.None` for latency-sensitive or non-replayable calls.
 
 ## Verification
+
+On 2026-10-15, the full local suite passed 46 tests and skipped 9 credential-dependent/opt-in tests. The macOS arm64 NativeAOT executable passed generated transport, enum labels, typed projection, 64-level instructions, structured Score legends, gzip multipart serialization, images, Box, nullable usage, future answers, and the AI-function adapter without network access. The nesting boundary regression was observed failing before the envelope-depth fix and passing afterward.
+
 
 On 2026-09-21, all 22 tests passed with live credentials and the opt-in latency lane. A subsequent standard run passed 21 tests and skipped only the opt-in latency benchmark. AutoSDK's trimming check reported no trimming warnings. The native executable in `src/tests/NativeAotSmoke` also passed on macOS arm64, covering generated transport, enum attributes, typed projections, unknown future answers, and the AI-function adapter without network access.
 
