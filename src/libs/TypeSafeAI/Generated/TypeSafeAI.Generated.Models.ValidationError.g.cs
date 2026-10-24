@@ -9,14 +9,14 @@ namespace TypeSafeAI.Generated
     public sealed partial class ValidationError
     {
         /// <summary>
-        /// Path to the invalid value: the request location followed by field names and array indices.
+        /// Path to the invalid value: the request location followed by field names and array indices. May be empty.
         /// </summary>
         [global::System.Text.Json.Serialization.JsonPropertyName("loc")]
         [global::System.Text.Json.Serialization.JsonRequired]
         public required global::System.Collections.Generic.IList<global::TypeSafeAI.Generated.AnyOf<string, int?>> Loc { get; set; }
 
         /// <summary>
-        /// Human-readable explanation of the validation failure.
+        /// Human-readable explanation of the validation failure. May be shortened with ….
         /// </summary>
         [global::System.Text.Json.Serialization.JsonPropertyName("msg")]
         [global::System.Text.Json.Serialization.JsonRequired]
@@ -30,13 +30,13 @@ namespace TypeSafeAI.Generated
         public required string Type { get; set; }
 
         /// <summary>
-        /// The input value that failed validation.
+        /// Text preview of the rejected input. May be shortened with ….
         /// </summary>
         [global::System.Text.Json.Serialization.JsonPropertyName("input")]
-        public object? Input { get; set; }
+        public string? Input { get; set; }
 
         /// <summary>
-        /// Additional context used to explain the validation failure.
+        /// Additional context used to explain the validation failure. Entries may be omitted or shortened.
         /// </summary>
         [global::System.Text.Json.Serialization.JsonPropertyName("ctx")]
         public object? Ctx { get; set; }
@@ -51,19 +51,19 @@ namespace TypeSafeAI.Generated
         /// Initializes a new instance of the <see cref="ValidationError" /> class.
         /// </summary>
         /// <param name="loc">
-        /// Path to the invalid value: the request location followed by field names and array indices.
+        /// Path to the invalid value: the request location followed by field names and array indices. May be empty.
         /// </param>
         /// <param name="msg">
-        /// Human-readable explanation of the validation failure.
+        /// Human-readable explanation of the validation failure. May be shortened with ….
         /// </param>
         /// <param name="type">
         /// Machine-readable validation error code.
         /// </param>
         /// <param name="input">
-        /// The input value that failed validation.
+        /// Text preview of the rejected input. May be shortened with ….
         /// </param>
         /// <param name="ctx">
-        /// Additional context used to explain the validation failure.
+        /// Additional context used to explain the validation failure. Entries may be omitted or shortened.
         /// </param>
 #if NET7_0_OR_GREATER
         [global::System.Diagnostics.CodeAnalysis.SetsRequiredMembers]
@@ -72,7 +72,7 @@ namespace TypeSafeAI.Generated
             global::System.Collections.Generic.IList<global::TypeSafeAI.Generated.AnyOf<string, int?>> loc,
             string msg,
             string type,
-            object? input,
+            string? input,
             object? ctx)
         {
             this.Loc = loc ?? throw new global::System.ArgumentNullException(nameof(loc));
