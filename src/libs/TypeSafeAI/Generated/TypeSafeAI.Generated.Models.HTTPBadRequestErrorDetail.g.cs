@@ -4,9 +4,9 @@
 namespace TypeSafeAI.Generated
 {
     /// <summary>
-    /// The input value that failed validation.
+    ///
     /// </summary>
-    public sealed partial class ValidationErrorInput
+    public sealed partial class HTTPBadRequestErrorDetail
     {
 
         /// <summary>

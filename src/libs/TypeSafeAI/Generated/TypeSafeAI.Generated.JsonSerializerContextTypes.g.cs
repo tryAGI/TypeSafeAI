@@ -105,107 +105,115 @@ namespace TypeSafeAI.Generated
         /// <summary>
         ///
         /// </summary>
-        public global::TypeSafeAI.Generated.HTTPValidationError? Type18 { get; set; }
+        public global::TypeSafeAI.Generated.HTTPBadRequestError? Type18 { get; set; }
         /// <summary>
         ///
         /// </summary>
-        public global::System.Collections.Generic.IList<global::TypeSafeAI.Generated.ValidationError>? Type19 { get; set; }
+        public global::TypeSafeAI.Generated.AnyOf<string, object>? Type19 { get; set; }
         /// <summary>
         ///
         /// </summary>
-        public global::TypeSafeAI.Generated.ValidationError? Type20 { get; set; }
+        public global::TypeSafeAI.Generated.HTTPValidationError? Type20 { get; set; }
         /// <summary>
         ///
         /// </summary>
-        public global::TypeSafeAI.Generated.ModelMetadata? Type21 { get; set; }
+        public global::System.Collections.Generic.IList<global::TypeSafeAI.Generated.ValidationError>? Type21 { get; set; }
         /// <summary>
         ///
         /// </summary>
-        public global::TypeSafeAI.Generated.ModelMetadataList? Type22 { get; set; }
+        public global::TypeSafeAI.Generated.ValidationError? Type22 { get; set; }
         /// <summary>
         ///
         /// </summary>
-        public global::System.Collections.Generic.IList<global::TypeSafeAI.Generated.ModelMetadata>? Type23 { get; set; }
+        public global::TypeSafeAI.Generated.ModelMetadata? Type23 { get; set; }
         /// <summary>
         ///
         /// </summary>
-        public global::TypeSafeAI.Generated.NoulCriteria? Type24 { get; set; }
+        public global::TypeSafeAI.Generated.ModelMetadataList? Type24 { get; set; }
         /// <summary>
         ///
         /// </summary>
-        public global::TypeSafeAI.Generated.NoulQuestion? Type25 { get; set; }
+        public global::System.Collections.Generic.IList<global::TypeSafeAI.Generated.ModelMetadata>? Type25 { get; set; }
         /// <summary>
         ///
         /// </summary>
-        public global::TypeSafeAI.Generated.Question? Type26 { get; set; }
+        public global::TypeSafeAI.Generated.NoulCriteria? Type26 { get; set; }
         /// <summary>
         ///
         /// </summary>
-        public global::TypeSafeAI.Generated.ScoreQuestion? Type27 { get; set; }
+        public global::TypeSafeAI.Generated.NoulQuestion? Type27 { get; set; }
         /// <summary>
         ///
         /// </summary>
-        public global::TypeSafeAI.Generated.QuestionDiscriminator? Type28 { get; set; }
+        public global::TypeSafeAI.Generated.Question? Type28 { get; set; }
         /// <summary>
         ///
         /// </summary>
-        public global::TypeSafeAI.Generated.QuestionDiscriminatorType? Type29 { get; set; }
+        public global::TypeSafeAI.Generated.ScoreQuestion? Type29 { get; set; }
         /// <summary>
         ///
         /// </summary>
-        public global::System.Collections.Generic.IList<global::TypeSafeAI.Generated.AnyOf<string, object, global::System.Collections.Generic.IList<object>>>? Type30 { get; set; }
+        public global::TypeSafeAI.Generated.QuestionDiscriminator? Type30 { get; set; }
         /// <summary>
         ///
         /// </summary>
-        public global::TypeSafeAI.Generated.SystemOneRequest? Type31 { get; set; }
+        public global::TypeSafeAI.Generated.QuestionDiscriminatorType? Type31 { get; set; }
         /// <summary>
         ///
         /// </summary>
-        public global::System.Collections.Generic.Dictionary<string, global::TypeSafeAI.Generated.Question>? Type32 { get; set; }
+        public global::System.Collections.Generic.IList<global::TypeSafeAI.Generated.AnyOf<string, object, global::System.Collections.Generic.IList<object>>>? Type32 { get; set; }
         /// <summary>
         ///
         /// </summary>
-        public global::System.Collections.Generic.Dictionary<string, global::TypeSafeAI.Generated.Asset>? Type33 { get; set; }
+        public global::TypeSafeAI.Generated.SystemOneRequest? Type33 { get; set; }
         /// <summary>
         ///
         /// </summary>
-        public global::TypeSafeAI.Generated.SystemOneResponse? Type34 { get; set; }
+        public global::System.Collections.Generic.Dictionary<string, global::TypeSafeAI.Generated.Question>? Type34 { get; set; }
         /// <summary>
         ///
         /// </summary>
-        public global::System.Collections.Generic.Dictionary<string, global::TypeSafeAI.Generated.Answer>? Type35 { get; set; }
+        public global::System.Collections.Generic.Dictionary<string, global::TypeSafeAI.Generated.Asset>? Type35 { get; set; }
         /// <summary>
         ///
         /// </summary>
-        public global::TypeSafeAI.Generated.Usage? Type36 { get; set; }
+        public global::TypeSafeAI.Generated.SystemOneResponse? Type36 { get; set; }
         /// <summary>
         ///
         /// </summary>
-        public int? Type37 { get; set; }
+        public global::System.Collections.Generic.Dictionary<string, global::TypeSafeAI.Generated.Answer>? Type37 { get; set; }
         /// <summary>
         ///
         /// </summary>
-        public global::System.Collections.Generic.IList<global::TypeSafeAI.Generated.AnyOf<string, int?>>? Type38 { get; set; }
+        public global::TypeSafeAI.Generated.Usage? Type38 { get; set; }
         /// <summary>
         ///
         /// </summary>
-        public global::TypeSafeAI.Generated.AnyOf<string, int?>? Type39 { get; set; }
+        public int? Type39 { get; set; }
         /// <summary>
         ///
         /// </summary>
-        public global::TypeSafeAI.Generated.SystemoneV1SystemonePostRequest? Type40 { get; set; }
+        public global::System.Collections.Generic.IList<global::TypeSafeAI.Generated.AnyOf<string, int?>>? Type40 { get; set; }
         /// <summary>
         ///
         /// </summary>
-        public byte[]? Type41 { get; set; }
+        public global::TypeSafeAI.Generated.AnyOf<string, int?>? Type41 { get; set; }
         /// <summary>
         ///
         /// </summary>
-        public global::TypeSafeAI.Generated.SystemoneV1SystemonePostTypeSafeDangerZoneImages? Type42 { get; set; }
+        public global::TypeSafeAI.Generated.SystemoneV1SystemonePostRequest? Type42 { get; set; }
         /// <summary>
         ///
         /// </summary>
-        public global::TypeSafeAI.Generated.SystemoneV1SystemonePostTypeSafeDangerZoneLongContext? Type43 { get; set; }
+        public byte[]? Type43 { get; set; }
+        /// <summary>
+        ///
+        /// </summary>
+        public global::TypeSafeAI.Generated.SystemoneV1SystemonePostTypeSafeDangerZoneImages? Type44 { get; set; }
+        /// <summary>
+        ///
+        /// </summary>
+        public global::TypeSafeAI.Generated.SystemoneV1SystemonePostTypeSafeDangerZoneLongContext? Type45 { get; set; }
 
         /// <summary>
         ///

@@ -41,6 +41,8 @@ namespace TypeSafeAI.Generated
 
             typeof(global::TypeSafeAI.Generated.JsonConverters.AnyOfJsonConverter<string, object, global::System.Collections.Generic.IList<object>>),
 
+            typeof(global::TypeSafeAI.Generated.JsonConverters.AnyOfJsonConverter<string, object>),
+
             typeof(global::TypeSafeAI.Generated.JsonConverters.AnyOfJsonConverter<string, object, global::System.Collections.Generic.IList<object>>),
 
             typeof(global::TypeSafeAI.Generated.JsonConverters.AnyOfJsonConverter<string, object, global::System.Collections.Generic.IList<object>>),
@@ -80,6 +82,8 @@ namespace TypeSafeAI.Generated
     [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::System.Collections.Generic.IList<object>))]
     [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::System.Collections.Generic.Dictionary<string, double>))]
     [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::TypeSafeAI.Generated.ChoiceQuestion))]
+    [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::TypeSafeAI.Generated.HTTPBadRequestError))]
+    [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::TypeSafeAI.Generated.AnyOf<string, object>), TypeInfoPropertyName = "AnyOfStringObject2")]
     [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::TypeSafeAI.Generated.HTTPValidationError))]
     [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::System.Collections.Generic.IList<global::TypeSafeAI.Generated.ValidationError>))]
     [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::TypeSafeAI.Generated.ValidationError))]

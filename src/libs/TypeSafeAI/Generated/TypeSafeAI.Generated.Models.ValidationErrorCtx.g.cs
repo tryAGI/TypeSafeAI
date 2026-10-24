@@ -4,7 +4,7 @@
 namespace TypeSafeAI.Generated
 {
     /// <summary>
-    /// Additional context used to explain the validation failure.
+    /// Additional context used to explain the validation failure. Entries may be omitted or shortened.
     /// </summary>
     public sealed partial class ValidationErrorCtx
     {
