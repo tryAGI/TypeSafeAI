@@ -64,6 +64,7 @@ namespace TypeSafeAI.Generated
     #pragma warning restore CS3016
     [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::TypeSafeAI.Generated.JsonSerializerContextTypes))]
     [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::System.Collections.Generic.List<object>), TypeInfoPropertyName = "SystemCollectionsGeneric_ObjectList")]
+    [global::System.Text.Json.Serialization.JsonSerializable(typeof(string[]))]
     [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::TypeSafeAI.Generated.Answer), TypeInfoPropertyName = "Answer2")]
     [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::TypeSafeAI.Generated.NoulAnswer))]
     [global::System.Text.Json.Serialization.JsonSerializable(typeof(global::TypeSafeAI.Generated.ChoiceAnswer))]
