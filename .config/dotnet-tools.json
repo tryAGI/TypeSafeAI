@@ -3,7 +3,7 @@
   "isRoot": true,
   "tools": {
     "autosdk.cli": {
-      "version": "0.35.0-preview.2.155",
+      "version": "0.35.0-preview.2.161",
       "commands": [
         "autosdk"
       ],
